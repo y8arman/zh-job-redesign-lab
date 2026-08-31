@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JOB REDESIGN LAB</title>
+<meta name="description" content="Interaktiver Demonstrator zur Studie Job Redesign der kantonalen Verwaltung Zürich.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="white" stroke="%230F6FB4" stroke-width="4"/><path d="M4 50 A30 30 0 0 0 60 18 Z" fill="%230F6FB4" opacity="0.95"/><path d="M32 10 L38 32 L32 54 L26 32 Z" fill="%230F6FB4"/><circle cx="32" cy="32" r="4" fill="white"/></svg>'>
+<style>
+/* ============================================================
+   JOB REDESIGN LAB  |  Zueri-Blau-Weiss  |  eine Datei
+   ============================================================ */
+:root{
+  --zueri:#0F6FB4;          /* dominantes Zueriblau, aus der Wappenvorlage gesampelt */
+  --zueri-deep:#0B5A93;
+  --zueri-bright:#1E9CD7;   /* Akzent, identisch mit dem Titelquadrat des Formulars */
+  --ink:#10314B;
+  --ink-soft:#3E5A72;
+  --field:#D6EEF9;          /* Feldblau aus dem Kantonsformular */
+  --field-2:#EAF6FD;
+  --paper:#F4FAFE;
+  --white:#FFFFFF;
+  --line:#BFE0F2;
+  --ok:#0E8A5F;  --ok-l:#DDEEE3;
+  --warn:#B98714;--warn-l:#FDF2D0;
+  --risk:#C0392B;--risk-l:#F8D7D3;
+  --keep:#5B4FC0;--keep-l:#E6E2F8;
+  --w-auto:#0F6FB4; --w-aug:#0E8A5F; --w-mensch:#C9A227;
+  --r:16px; --r-s:10px;
+  --sh:0 1px 2px rgba(16,49,75,.06),0 10px 30px rgba(15,111,180,.10);
+  --sh-lg:0 2px 6px rgba(16,49,75,.08),0 24px 60px rgba(15,111,180,.16);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --t-fast:200ms; --t-med:320ms; --t-slow:450ms;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:"Segoe UI",Roboto,"Helvetica Neue",system-ui,-apple-system,sans-serif;
+  color:var(--ink);background:var(--white);line-height:1.45;
+  min-height:100svh;overflow-x:hidden;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select{font:inherit;color:inherit}
+h1,h2,h3{line-height:1.12;font-weight:800;letter-spacing:-.01em}
+small{color:var(--ink-soft)}
+.hide{display:none !important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- Screens ---------- */
+.screen{display:none;min-height:100svh;flex-direction:column}
+.screen.is-active{display:flex;animation:rise var(--t-slow) var(--ease)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.wrap{width:min(1180px,92vw);margin:0 auto;flex:1;display:flex;flex-direction:column}
+.wrap-narrow{width:min(680px,92vw);margin:0 auto;flex:1;display:flex;flex-direction:column}
+
+/* ---------- Landing / Hero ---------- */
+#scr-home{position:relative;background:var(--white)}
+#hero-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-fg{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;
+  width:min(1180px,92vw);margin:0 auto;padding:clamp(20px,4vh,44px) 0}
+.brandline{display:flex;align-items:center;gap:12px;color:var(--zueri-deep);font-weight:700}
+.mark{width:40px;height:40px;flex:0 0 auto;filter:drop-shadow(0 2px 6px rgba(15,111,180,.25))}
+.hero-main{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:820px}
+.kicker{color:var(--zueri);font-weight:800;letter-spacing:.18em;font-size:12px;text-transform:uppercase;
+  opacity:0;animation:fadeup .7s var(--ease) .1s forwards}
+h1.hero-title{font-size:clamp(44px,7.2vw,84px);color:var(--ink);margin:.15em 0 .2em;
+  opacity:0;animation:fadeup .7s var(--ease) .22s forwards}
+h1.hero-title .blue{color:var(--zueri)}
+.tagline{font-size:clamp(16px,1.8vw,21px);color:var(--ink-soft);max-width:640px;
+  opacity:0;animation:fadeup .7s var(--ease) .34s forwards}
+@keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(20px,3.5vh,36px);
+  opacity:0;animation:fadeup .7s var(--ease) .46s forwards}
+.cta-row-2{margin-top:14px;opacity:0;animation:fadeup .7s var(--ease) .55s forwards}
+.stat-row{display:flex;gap:14px;margin-top:clamp(22px,4vh,40px);flex-wrap:wrap;
+  opacity:0;animation:fadeup .7s var(--ease) .64s forwards}
+.stat{background:rgba(255,255,255,.96);border:1.5px solid var(--line);border-radius:14px;
+  padding:12px 22px 13px;box-shadow:var(--sh);min-width:148px;text-align:center}
+.stat b{font-size:clamp(26px,3.2vw,38px);color:var(--zueri);font-weight:800;display:block;line-height:1;
+  margin-bottom:5px;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--ink-soft);white-space:nowrap;font-weight:600}
+.hero-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  width:min(1180px,92vw);margin:0 auto;padding:14px 0 18px;color:#DFF1FB;font-size:12.5px}
+.hero-foot a{color:#fff}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;padding:0 26px;border-radius:14px;font-weight:700;font-size:16px;
+  transition:transform var(--t-fast) var(--ease),box-shadow var(--t-fast) var(--ease),background var(--t-fast),color var(--t-fast);
+  position:relative;overflow:hidden}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-primary{background:var(--zueri);color:#fff;box-shadow:0 6px 18px rgba(15,111,180,.35)}
+.btn-primary:hover{background:var(--zueri-deep);box-shadow:0 10px 26px rgba(15,111,180,.45)}
+.btn-bright{background:var(--zueri-bright);color:#fff;box-shadow:0 6px 18px rgba(30,156,215,.35)}
+.btn-bright:hover{filter:brightness(1.06)}
+.btn-ghost{background:rgba(255,255,255,.9);color:var(--zueri-deep);border:1.5px solid var(--line)}
+.btn-ghost:hover{background:#fff;border-color:var(--zueri-bright)}
+.btn-quiet{color:var(--zueri-deep);min-height:40px;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.btn-danger{background:var(--risk-l);color:var(--risk);border:1.5px solid #E9B4AC}
+.btn[disabled]{opacity:.55;pointer-events:none}
+.btn .spin{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;
+  animation:rot .8s linear infinite;display:none}
+.btn.is-busy .spin{display:inline-block}
+.btn.is-busy .lbl{opacity:.7}
+@keyframes rot{to{transform:rotate(360deg)}}
+.btn-ghost .spin,.btn-danger .spin{border-color:rgba(15,111,180,.25);border-top-color:var(--zueri)}
+
+/* ---------- App-Kopf (innere Screens) ---------- */
+.appbar{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--field);
+  position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);z-index:20}
+.appbar .mark{width:30px;height:30px}
+.appbar .ttl{font-weight:800;color:var(--zueri-deep)}
+.appbar .sub{font-size:12.5px;color:var(--ink-soft)}
+.appbar .grow{flex:1}
+.conn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft);
+  padding:6px 12px;border-radius:999px;background:var(--field-2);border:1px solid var(--field)}
+.conn i{width:9px;height:9px;border-radius:50%;background:#9AB6C9;transition:background var(--t-med)}
+.conn.on i{background:var(--ok);box-shadow:0 0 0 4px rgba(14,138,95,.15)}
+.conn.off i{background:var(--risk);animation:blink 1.1s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
+.ver{font-size:11.5px;color:#8FB4CC;letter-spacing:.04em}
+
+/* ---------- Cards & Layout ---------- */
+.card{background:#fff;border:1px solid var(--field);border-radius:var(--r);box-shadow:var(--sh);
+  padding:clamp(16px,2.4vw,26px);position:relative}
+.card::before{content:"";position:absolute;top:0;left:0;width:56px;height:8px;
+  background:linear-gradient(135deg,var(--zueri) 0 60%,transparent 60.5%);
+  border-top-left-radius:var(--r)}
+.card.plain::before{display:none}
+.card h2{font-size:clamp(19px,2.2vw,24px);color:var(--zueri-deep);margin-bottom:6px}
+.card h3{font-size:16px;color:var(--zueri-deep);margin:14px 0 6px}
+.card .lead{color:var(--ink-soft);font-size:14.5px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.spacer{flex:1}
+.pagepad{padding:clamp(16px,3vh,30px) 0 40px}
+
+/* ---------- Tabs (diagonaler Unterstrich) ---------- */
+.tabs{display:flex;gap:8px;margin:16px 0;flex-wrap:wrap}
+.tab{padding:10px 18px;border-radius:12px;font-weight:700;color:var(--ink-soft);position:relative;
+  transition:color var(--t-fast),background var(--t-fast)}
+.tab:hover{background:var(--field-2)}
+.tab.on{color:var(--zueri-deep);background:var(--field-2)}
+.tab.on::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:4px;
+  background:var(--zueri);clip-path:polygon(0 100%,6% 0,100% 0,94% 100%)}
+
+/* ---------- Chips ---------- */
+.chip{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;
+  font-weight:700;font-size:13.5px;border:1px solid transparent;
+  transition:background var(--t-med) var(--ease),color var(--t-med),transform var(--t-med)}
+.chip.pop{animation:chippop var(--t-med) var(--ease)}
+@keyframes chippop{0%{transform:scale(.85);opacity:.4}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+.st-ok{background:var(--ok-l);color:var(--ok);border-color:#BFE0CF}
+.st-plaus{background:var(--warn-l);color:#8A6410;border-color:#EBD9A8}
+.st-offen{background:var(--risk-l);color:var(--risk);border-color:#EFC0B9}
+.st-bewusst{background:var(--keep-l);color:var(--keep);border-color:#CFC8F0}
+.wk-auto{background:#E3F0FA;color:var(--zueri-deep);border-color:#BFDCF2}
+.wk-aug{background:var(--ok-l);color:var(--ok);border-color:#BFE0CF}
+.wk-mensch{background:#F6EFD8;color:#8A6410;border-color:#EBD9A8}
+.chip-dim{background:var(--field-2);color:var(--ink-soft);border-color:var(--field);font-weight:600}
+
+/* ---------- Kompass (Erleben) ---------- */
+.slider-group{border:1px solid var(--field);border-radius:var(--r-s);padding:12px 14px;background:var(--paper)}
+.slider-group>b{display:block;color:var(--zueri-deep);font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.sl{display:grid;grid-template-columns:120px 1fr 30px;align-items:center;gap:10px;padding:6px 0}
+.sl label{font-size:13.5px;color:var(--ink-soft)}
+.sl output{font-weight:800;color:var(--zueri);text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;
+  background:linear-gradient(90deg,var(--zueri) 0 var(--fill,50%),var(--field) var(--fill,50%) 100%)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:#fff;border:3px solid var(--zueri);margin-top:-7px;box-shadow:0 2px 6px rgba(15,111,180,.35);
+  transition:transform var(--t-fast)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.15)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--field)}
+input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--zueri)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--zueri)}
+.result-panel{display:flex;flex-direction:column;gap:12px}
+.result-line{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:var(--r-s);
+  background:var(--paper);border:1px solid var(--field)}
+.result-line .k{width:130px;flex:0 0 auto;font-size:12.5px;color:var(--ink-soft);padding-top:5px}
+.result-line .why{font-size:12.5px;color:var(--ink-soft);margin-top:4px}
+.bignum{font-size:clamp(40px,5vw,64px);font-weight:800;color:var(--zueri);line-height:1;font-variant-numeric:tabular-nums}
+select.task-sel,input.txt{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:12px;
+  padding:0 14px;background:#fff;transition:border-color var(--t-fast),box-shadow var(--t-fast)}
+select.task-sel:focus,input.txt:focus{outline:none;border-color:var(--zueri-bright);box-shadow:0 0 0 4px rgba(30,156,215,.18)}
+
+/* ---------- Landkarte ---------- */
+.map-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.seg{display:inline-flex;background:var(--field-2);border:1px solid var(--field);border-radius:12px;padding:4px;gap:4px}
+.seg button{padding:8px 14px;border-radius:9px;font-weight:700;font-size:13.5px;color:var(--ink-soft);
+  transition:background var(--t-fast),color var(--t-fast)}
+.seg button.on{background:var(--zueri);color:#fff;box-shadow:0 3px 10px rgba(15,111,180,.35)}
+.map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.tile{background:#fff;border:1px solid var(--field);border-radius:12px;padding:10px 12px 12px;cursor:pointer;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
+  transition:transform var(--t-fast) var(--ease),box-shadow var(--t-fast);position:relative;
+  animation:tilein .4s var(--ease) both}
+@keyframes tilein{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.tile:hover{transform:translateY(-3px);box-shadow:var(--sh)}
+.tile .nm{font-size:12.5px;font-weight:700;min-height:34px;line-height:1.25}
+.tile .fm{font-size:10.5px;color:var(--ink-soft);margin-top:2px}
+.tile .bar{height:6px;border-radius:3px;background:var(--field);margin-top:8px;overflow:hidden}
+.tile .bar i{display:block;height:100%;background:var(--zueri);width:0;transition:width .6s var(--ease)}
+.tile .st-dot{position:absolute;top:8px;right:16px;width:10px;height:10px;border-radius:50%}
+.drawer{position:fixed;inset:auto 0 0 0;z-index:60;background:#fff;border-top-left-radius:22px;border-top-right-radius:22px;
+  box-shadow:0 -20px 60px rgba(16,49,75,.25);padding:20px min(4vw,28px) 26px;max-height:78svh;overflow:auto;
+  transform:translateY(105%);transition:transform var(--t-slow) var(--ease)}
+.drawer.open{transform:none}
+.drawer .grab{width:44px;height:5px;border-radius:3px;background:var(--field);margin:0 auto 14px}
+.backdrop{position:fixed;inset:0;background:rgba(16,49,75,.35);opacity:0;pointer-events:none;
+  transition:opacity var(--t-med);z-index:55}
+.backdrop.open{opacity:1;pointer-events:auto}
+
+/* ---------- Host: Playlist & Lobby ---------- */
+.pl-item{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--field);
+  border-radius:12px;padding:10px 12px;animation:tilein .3s var(--ease)}
+.pl-item .ic{width:34px;height:34px;border-radius:9px;background:var(--field-2);display:grid;place-items:center;
+  color:var(--zueri);font-weight:800;flex:0 0 auto}
+.pl-item .t{flex:1;min-width:0}
+.pl-item .t b{display:block;font-size:14px}
+.pl-item .t span{font-size:12px;color:var(--ink-soft)}
+.pl-item .mv{width:34px;height:34px;border-radius:9px;color:var(--zueri-deep);display:grid;place-items:center;
+  transition:background var(--t-fast)}
+.pl-item .mv:hover{background:var(--field-2)}
+.libbtn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;
+  border:1.5px dashed var(--line);color:var(--zueri-deep);font-weight:600;transition:background var(--t-fast),border-color var(--t-fast)}
+.libbtn:hover{background:var(--field-2);border-color:var(--zueri-bright)}
+.code-big{font-size:clamp(44px,7vw,76px);font-weight:800;letter-spacing:.14em;color:var(--zueri);
+  font-variant-numeric:tabular-nums}
+#qr-box{background:#fff;border:1px solid var(--field);border-radius:var(--r);padding:14px;display:inline-block;box-shadow:var(--sh)}
+#qr-box img,#qr-box canvas{display:block}
+.player-badges{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+.pbadge{padding:8px 14px;border-radius:999px;background:var(--field-2);border:1px solid var(--field);
+  font-weight:700;font-size:13.5px;color:var(--zueri-deep);animation:chippop .35s var(--ease)}
+
+/* ---------- Projektor-Module ---------- */
+.proj-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.proj-head .mtype{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--zueri);text-transform:uppercase}
+.proj-q{font-size:clamp(22px,3.2vw,34px);font-weight:800;max-width:1000px}
+.hbars{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.hbar{display:grid;grid-template-columns:minmax(140px,260px) 1fr 70px;align-items:center;gap:14px}
+.hbar .lab{font-weight:700;font-size:15px}
+.hbar .tr{height:34px;background:var(--field-2);border-radius:10px;overflow:hidden;border:1px solid var(--field)}
+.hbar .fl{height:100%;width:0;border-radius:10px;background:var(--zueri);
+  transition:width .55s var(--ease)}
+.hbar.correct .fl{background:var(--ok)}
+.hbar .ct{font-weight:800;color:var(--zueri-deep);text-align:right;font-variant-numeric:tabular-nums}
+.countpill{margin-left:auto;background:var(--field-2);border:1px solid var(--field);border-radius:999px;
+  padding:8px 16px;font-weight:800;color:var(--zueri-deep)}
+.timer-wrap{position:relative;width:74px;height:74px;flex:0 0 auto}
+.timer-wrap svg{transform:rotate(-90deg)}
+.timer-wrap .num{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:24px;color:var(--zueri-deep)}
+canvas.mod-canvas{width:100%;border:1px solid var(--field);border-radius:var(--r);background:#fff;box-shadow:var(--sh)}
+.heat{display:grid;grid-template-columns:110px repeat(3,1fr);gap:8px;margin-top:16px;max-width:820px}
+.heat .hc{border-radius:10px;background:var(--field-2);border:1px solid var(--field);min-height:74px;
+  display:grid;place-items:center;font-weight:800;font-size:22px;color:var(--zueri-deep);position:relative;
+  transition:background .4s var(--ease)}
+.heat .hl{display:grid;place-items:center;font-size:12.5px;color:var(--ink-soft);font-weight:700;text-align:center}
+.heat .hc.glow{animation:glow .5s var(--ease)}
+@keyframes glow{0%{box-shadow:0 0 0 0 rgba(30,156,215,.55)}100%{box-shadow:0 0 0 16px rgba(30,156,215,0)}}
+.podium{display:flex;align-items:flex-end;gap:18px;justify-content:center;margin:26px 0 10px}
+.pod{width:min(200px,26vw);text-align:center}
+.pod .box{background:var(--field-2);border:1px solid var(--field);border-radius:14px 14px 0 0;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:12px;transform-origin:bottom;
+  animation:podup .7s var(--ease) both}
+@keyframes podup{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.pod .nm{font-weight:800;font-size:16px;word-break:break-word}
+.pod .pt{color:var(--zueri);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums}
+.pod .rk{font-size:34px;font-weight:800;color:var(--zueri-deep);margin-top:6px}
+
+/* ---------- Player (Handy) ---------- */
+.pl-screen{max-width:520px;width:92vw;margin:0 auto;padding:18px 0 30px;flex:1;display:flex;flex-direction:column;gap:14px}
+.pl-q{font-size:20px;font-weight:800}
+.ansbtn{width:100%;min-height:60px;border-radius:14px;border:1.5px solid var(--line);background:#fff;
+  font-weight:700;font-size:16.5px;padding:12px 16px;text-align:left;display:flex;align-items:center;gap:12px;
+  transition:transform var(--t-fast),border-color var(--t-fast),background var(--t-fast);box-shadow:var(--sh)}
+.ansbtn:active{transform:scale(.985)}
+.ansbtn .dot{width:26px;height:26px;border-radius:50%;background:var(--field);color:var(--zueri-deep);
+  display:grid;place-items:center;font-size:13px;font-weight:800;flex:0 0 auto}
+.ansbtn.sel{border-color:var(--zueri);background:var(--field-2)}
+.ansbtn.good{border-color:var(--ok);background:var(--ok-l)}
+.ansbtn.bad{border-color:var(--risk);background:var(--risk-l)}
+.wait-pulse{width:80px;height:80px;margin:8vh auto 0;border-radius:50%;position:relative;
+  background:conic-gradient(from 135deg,var(--zueri) 0 50%,#fff 50% 100%);
+  border:3px solid var(--zueri);animation:spinSlow 6s linear infinite}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+.feedback-big{font-size:26px;font-weight:800;text-align:center;margin-top:4vh}
+.pts-pop{font-size:44px;font-weight:800;color:var(--zueri);text-align:center;animation:chippop .5s var(--ease)}
+
+/* ---------- Toast & Fehler ---------- */
+#toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,140%);z-index:120;
+  background:var(--ink);color:#fff;padding:13px 20px;border-radius:14px;font-weight:600;font-size:14.5px;
+  box-shadow:var(--sh-lg);max-width:min(560px,92vw);transition:transform var(--t-slow) var(--ease)}
+#toast.show{transform:translate(-50%,0)}
+#toast.err{background:var(--risk)}
+.notice{border:1px solid var(--warn);background:var(--warn-l);color:#6B4E0B;border-radius:var(--r-s);
+  padding:12px 14px;font-size:13.5px}
+.notice.err{border-color:var(--risk);background:var(--risk-l);color:var(--risk)}
+
+/* ---------- Footer ---------- */
+.foot{border-top:1px solid var(--field);padding:16px 0 22px;color:var(--ink-soft);font-size:12.5px;
+  display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.foot .ver{margin-left:auto}
+
+/* ---------- Demo-Banner ---------- */
+#demo-banner{position:fixed;top:0;left:0;right:0;z-index:90;background:var(--zueri);color:#fff;
+  text-align:center;font-weight:700;font-size:13px;padding:7px 12px;display:none;
+  clip-path:polygon(0 0,100% 0,100% 72%,0 100%)}
+body.demo #demo-banner{display:block}
+body.demo .appbar{top:34px}
+
+/* ---------- Diagonal-Sektionen ---------- */
+.diag-top{clip-path:polygon(0 0,100% 6%,100% 100%,0 100%)}
+.blue-band{background:linear-gradient(160deg,var(--zueri) 0%,var(--zueri-deep) 100%);color:#fff}
+.blue-band .card{color:var(--ink)}
+
+@media(max-width:640px){
+  .sl{grid-template-columns:96px 1fr 26px}
+  .hbar{grid-template-columns:110px 1fr 52px}
+  .heat{grid-template-columns:84px repeat(3,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div id="demo-banner">DEMO-MODUS: simulierte Teilnehmende, keine Verbindung, keine Speicherung</div>
+
+<!-- ================= S0 LANDING ================= -->
+<section class="screen is-active" id="scr-home">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-fg">
+    <div class="brandline">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
+      <span>JOB REDESIGN LAB</span>
+    </div>
+    <div class="hero-main">
+      <div class="kicker">Interaktiver Demonstrator</div>
+      <h1 class="hero-title">Aufgaben verstehen.<br><span class="blue">Zukunft gestalten.</span></h1>
+      <p class="tagline">Interaktiver Demonstrator zur Studie Job Redesign der kantonalen Verwaltung Zürich. Aufgaben verstehen, Betroffenheit bewerten, Zukunft gestalten.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" id="btn-go-erleben"><span class="lbl">Erleben</span></button>
+        <button class="btn btn-bright" id="btn-go-host"><span class="spin"></span><span class="lbl">Workshop starten</span></button>
+        <button class="btn btn-ghost" id="btn-go-join"><span class="lbl">Workshop beitreten</span></button>
+      </div>
+      <div class="cta-row cta-row-2">
+        <button class="btn btn-ghost" id="btn-go-demo"><span class="lbl">Demo ansehen</span></button>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b data-count="9">0</b><span>Dimensionen</span></div>
+        <div class="stat"><b data-count="48">0</b><span>Aufgabentypen</span></div>
+        <div class="stat"><b data-count="4">0</b><span>Statusstufen</span></div>
+      </div>
+      <div class="notice err hide" id="boot-error" style="margin-top:18px"></div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <span></span>
+    <span class="ver js-ver"></span>
+  </div>
+</section>
+
+<!-- ================= S1 ERLEBEN ================= -->
+<section class="screen" id="scr-erleben">
+  <div class="wrap">
+    <div class="appbar">
+      <button class="btn btn-quiet js-home">Start</button>
+      <span class="ttl">Erleben</span><span class="sub">Methodik zum Anfassen, ohne Anmeldung</span>
+      <span class="grow"></span><span class="ver js-ver"></span>
+    </div>
+    <div class="tabs">
+      <button class="tab on" id="tab-kompass">Aufgaben-Kompass</button>
+      <button class="tab" id="tab-karte">Betroffenheitslandkarte</button>
+    </div>
+
+    <div id="panel-kompass" class="grid-2 pagepad">
+      <div class="card">
+        <h2>Eine Aufgabe, neun Dimensionen</h2>
+        <p class="lead">Wählen Sie einen synthetischen Aufgabentyp oder beschreiben Sie eine eigene Aufgabe und stellen Sie das Profil ein. Das Regelwerk entspricht dem Simulationstool der Studie.</p>
+        <div class="stack" style="margin-top:14px">
+          <select class="task-sel" id="k-task" aria-label="Aufgabentyp"></select>
+          <input class="txt hide" id="k-custom" maxlength="60" placeholder="Eigene Aufgabe benennen (max. 60 Zeichen)">
+          <div class="slider-group"><b>Aufgabenprofil</b><div id="sg-profil"></div></div>
+          <div class="slider-group"><b>Mensch und Kontext</b><div id="sg-mensch"></div></div>
+          <div class="slider-group"><b>Umsetzung</b><div id="sg-umsetz"></div></div>
+          <small id="k-fixnote"></small>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Ergebnis</h2>
+        <canvas id="k-radar" class="mod-canvas" height="240" aria-label="Profil-Radar"></canvas>
+        <div class="result-panel" id="k-result" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div id="panel-karte" class="pagepad hide">
+      <div class="map-head">
+        <div class="seg" id="seg-szen" role="group" aria-label="Szenario"></div>
+        <select class="task-sel" id="k-famfilter" style="max-width:320px" aria-label="Funktionsfamilie filtern"></select>
+        <span class="spacer"></span>
+        <div style="text-align:right"><div class="bignum" id="map-kpi">0.0%</div>
+          <small>der Arbeitszeit mit adressierbarem Veränderungspotenzial</small></div>
+      </div>
+      <div class="map-grid" id="map-grid"></div>
+      <small style="display:block;margin-top:14px">Synthetische Aufgabenbibliothek mit 48 Aufgabentypen. Klick auf eine Kachel zeigt Profil, Wirkung, Zeithorizont und Machbarkeitsstatus.</small>
+    </div>
+
+    <div class="foot"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<!-- Kachel-Drawer -->
+<div class="backdrop" id="drawer-bg"></div>
+<div class="drawer" id="tile-drawer" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <div id="drawer-body"></div>
+</div>
+
+<!-- ================= S2b PLAYLIST ================= -->
+<section class="screen" id="scr-build">
+  <div class="wrap">
+    <div class="appbar">
+      <button class="btn btn-quiet js-home">Start</button>
+      <span class="ttl">Session vorbereiten</span><span class="sub">Module wählen und ordnen</span>
+      <span class="grow"></span><span class="ver js-ver"></span>
+    </div>
+    <div class="grid-2 pagepad">
+      <div class="card">
+        <h2>Ihre Playlist</h2>
+        <p class="lead">Diese Module laufen der Reihe nach über den Projektor. Die Vorauswahl deckt Stimmung, Begriffe, gemeinsame Bewertung, Wissen und Betroffenheit ab.</p>
+        <div class="stack" id="pl-list" style="margin-top:14px"></div>
+        <div class="row" style="margin-top:18px">
+          <span class="spacer"></span>
+          <button class="btn btn-primary" id="btn-create"><span class="spin"></span><span class="lbl">Session erstellen</span></button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Modulbibliothek</h2>
+        <p class="lead">Tippen Sie auf einen Baustein, um ihn der Playlist hinzuzufügen.</p>
+        <div class="stack" id="lib-list" style="margin-top:14px"></div>
+      </div>
+    </div>
+    <div class="foot"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<!-- ================= S2c LOBBY ================= -->
+<section class="screen" id="scr-lobby">
+  <div class="wrap">
+    <div class="appbar">
+      <span class="ttl">Lobby</span><span class="sub">Teilnehmende treten jetzt bei</span>
+      <span class="grow"></span>
+      <span class="conn" id="conn-h"><i></i><span>Verbindung</span></span>
+      <span class="ver js-ver"></span>
+    </div>
+    <div class="grid-2 pagepad">
+      <div class="card" style="text-align:center">
+        <h2>Beitritt per QR oder Code</h2>
+        <div id="qr-box" style="margin:14px auto"></div>
+        <div class="code-big" id="lob-code">•••••</div>
+        <div class="row" style="justify-content:center;margin-top:8px">
+          <span id="lob-link" style="font-size:13px;color:var(--ink-soft);word-break:break-all"></span>
+          <button class="btn btn-quiet" id="btn-copy">Link kopieren</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><h2>Teilnehmende</h2><span class="countpill" id="lob-count">0</span></div>
+        <div class="player-badges" id="lob-players" style="margin-top:12px"></div>
+        <div class="row" style="margin-top:22px">
+          <button class="btn btn-ghost" id="btn-bots"><span class="spin"></span><span class="lbl">15 Test-Bots (B)</span></button>
+          <span class="spacer"></span>
+          <button class="btn btn-primary" id="btn-start"><span class="spin"></span><span class="lbl">Workshop starten</span></button>
+        </div>
+        <small style="display:block;margin-top:12px">Vor dem Echteinsatz: mit den Bots einmal alle Module durchspielen. Die Bots verhalten sich wie echte Teilnehmende.</small>
+      </div>
+    </div>
+    <div class="foot"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<!-- ================= S2d HOST MODUL ================= -->
+<section class="screen" id="scr-hostmod">
+  <div class="wrap">
+    <div class="appbar">
+      <span class="ttl" id="hm-prog">Modul</span>
+      <span class="grow"></span>
+      <span class="countpill" id="hm-answered">0 / 0</span>
+      <span class="conn" id="conn-h2"><i></i><span>Verbindung</span></span>
+      <span class="ver js-ver"></span>
+    </div>
+    <div class="pagepad" style="flex:1;display:flex;flex-direction:column">
+      <div class="proj-head">
+        <span class="mtype" id="hm-type"></span>
+        <div class="timer-wrap hide" id="hm-timer">
+          <svg width="74" height="74"><circle cx="37" cy="37" r="31" fill="none" stroke="#D6EEF9" stroke-width="7"/><circle id="hm-timer-arc" cx="37" cy="37" r="31" fill="none" stroke="#0F6FB4" stroke-width="7" stroke-linecap="round" stroke-dasharray="194.8" stroke-dashoffset="0"/></svg>
+          <div class="num" id="hm-timer-num"></div>
+        </div>
+      </div>
+      <div class="proj-q" id="hm-q"></div>
+      <div id="hm-body" style="flex:1;margin-top:6px"></div>
+      <div class="row" style="margin-top:18px">
+        <button class="btn btn-ghost" id="btn-hm-export"><span class="lbl">Ergebnis als Bild sichern</span></button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="btn-hm-main"><span class="spin"></span><span class="lbl">Starten</span></button>
+      </div>
+    </div>
+    <div class="foot"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<!-- ================= S2e ENDE ================= -->
+<section class="screen" id="scr-hostend">
+  <div class="wrap pagepad">
+    <div class="card" style="text-align:center">
+      <h2>Danke für den gemeinsamen Blick auf die Aufgaben von morgen</h2>
+      <p class="lead">Alle Modulergebnisse konnten während der Session als Bild gesichert werden. Die Session kann jetzt gelöscht werden.</p>
+      <div class="podium" id="end-podium"></div>
+      <div class="row" style="justify-content:center;margin-top:18px">
+        <button class="btn btn-danger" id="btn-del"><span class="spin"></span><span class="lbl">Session löschen</span></button>
+        <button class="btn btn-quiet js-home">Zur Startseite</button>
+      </div>
+    </div>
+    <div class="foot"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<!-- ================= S3 JOIN & PLAYER ================= -->
+<section class="screen" id="scr-join">
+  <div class="wrap-narrow pagepad" style="justify-content:center">
+    <div class="card">
+      <h2>Workshop beitreten</h2>
+      <div class="stack" style="margin-top:14px">
+        <input class="txt" id="join-code" maxlength="5" placeholder="Session-Code (5 Zeichen)" autocapitalize="characters" autocomplete="off">
+        <input class="txt" id="join-name" maxlength="16" placeholder="Ihr Alias (max. 16 Zeichen)" autocomplete="off">
+        <div class="row">
+          <button class="btn btn-quiet js-home">Zurück</button><span class="spacer"></span>
+          <button class="btn btn-primary" id="btn-join"><span class="spin"></span><span class="lbl">Beitreten</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<section class="screen" id="scr-player">
+  <div class="pl-screen">
+    <div class="row">
+      <b id="pl-name"></b><span class="chip chip-dim" id="pl-code"></span>
+      <span class="spacer"></span>
+      <span class="conn" id="conn-p"><i></i><span>Live</span></span>
+    </div>
+    <div id="pl-body" style="flex:1;display:flex;flex-direction:column;gap:12px"></div>
+    <div class="foot" style="border:0;padding-top:6px"><span></span><span class="ver js-ver"></span></div>
+  </div>
+</section>
+
+<div id="toast" role="status"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+/* qrcodejs, MIT-Lizenz, davidshimjs, eingebettet fuer den Ein-Datei-Betrieb */
+var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData=this.parsedData.concat(b)}this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){return"undefined"!=typeof CanvasRenderingContext2D}function n(){var a=!1,b=navigator.userAgent;return/android/i.test(b)&&(a=!0,aMat=b.toString().match(/android ([0-9]\.[0-9])/i),aMat&&aMat[1]&&(a=parseFloat(aMat[1]))),a}function r(a,b){for(var c=1,e=s(a),f=0,g=l.length;g>=f;f++){var h=0;switch(b){case d.L:h=l[f][0];break;case d.M:h=l[f][1];break;case d.Q:h=l[f][2];break;case d.H:h=l[f][3]}if(h>=e)break;c++}if(c>l.length)throw new Error("Too long data");return c}function s(a){var b=encodeURI(a).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return b.length+(b.length!=a?3:0)}a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);(0==c||a>d)&&(a=d,b=c)}return b},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=0==a%2);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=0==b%2)},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(1&d>>e);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(1&d>>e);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(1&a[g]>>>e));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.PAD0=236,b.PAD1=17,b.createData=function(a,c,d){for(var e=j.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var l=0,h=0;h<e.length;h++)l+=e[h].dataCount;if(g.getLengthInBits()>8*l)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*l+")");for(g.getLengthInBits()+4<=8*l&&g.put(0,4);0!=g.getLengthInBits()%8;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*l)break;if(g.put(b.PAD0,8),g.getLengthInBits()>=8*l)break;g.put(b.PAD1,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;m<g[j].length;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s};for(var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return 0==(b+c)%2;case e.PATTERN001:return 0==b%2;case e.PATTERN010:return 0==c%3;case e.PATTERN011:return 0==(b+c)%3;case e.PATTERN100:return 0==(Math.floor(b/2)+Math.floor(c/3))%2;case e.PATTERN101:return 0==b*c%2+b*c%3;case e.PATTERN110:return 0==(b*c%2+b*c%3)%2;case e.PATTERN111:return 0==(b*c%3+(b+c)%2)%2;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.gexp(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f+0],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},k.prototype={get:function(a){var b=Math.floor(a/8);return 1==(1&this.buffer[b]>>>7-a%8)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(1&a>>>b-c-1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var l=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]],o=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();Math.floor(b.width/d),Math.floor(b.height/d),this.clear();var h=g("svg",{viewBox:"0 0 "+String(d)+" "+String(d),width:"100%",height:"100%",fill:b.colorLight});h.setAttributeNS("http://www.w3.org/2000/xmlns/","xmlns:xlink","http://www.w3.org/1999/xlink"),c.appendChild(h),h.appendChild(g("rect",{fill:b.colorDark,width:"1",height:"1",id:"template"}));for(var i=0;d>i;i++)for(var j=0;d>j;j++)if(a.isDark(i,j)){var k=g("use",{x:String(i),y:String(j)});k.setAttributeNS("http://www.w3.org/1999/xlink","href","#template"),h.appendChild(k)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),p="svg"===document.documentElement.tagName.toLowerCase(),q=p?o:m()?function(){function a(){this._elImage.src=this._elCanvas.toDataURL("image/png"),this._elImage.style.display="block",this._elCanvas.style.display="none"}function d(a,b){var c=this;if(c._fFail=b,c._fSuccess=a,null===c._bSupportDataURI){var d=document.createElement("img"),e=function(){c._bSupportDataURI=!1,c._fFail&&_fFail.call(c)},f=function(){c._bSupportDataURI=!0,c._fSuccess&&c._fSuccess.call(c)};return d.onabort=e,d.onerror=e,d.onload=f,d.src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",void 0}c._bSupportDataURI===!0&&c._fSuccess?c._fSuccess.call(c):c._bSupportDataURI===!1&&c._fFail&&c._fFail.call(c)}if(this._android&&this._android<=2.1){var b=1/window.devicePixelRatio,c=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(a,d,e,f,g,h,i,j){if("nodeName"in a&&/img/i.test(a.nodeName))for(var l=arguments.length-1;l>=1;l--)arguments[l]=arguments[l]*b;else"undefined"==typeof j&&(arguments[1]*=b,arguments[2]*=b,arguments[3]*=b,arguments[4]*=b);c.apply(this,arguments)}}var e=function(a,b){this._bIsPainted=!1,this._android=n(),this._htOption=b,this._elCanvas=document.createElement("canvas"),this._elCanvas.width=b.width,this._elCanvas.height=b.height,a.appendChild(this._elCanvas),this._el=a,this._oContext=this._elCanvas.getContext("2d"),this._bIsPainted=!1,this._elImage=document.createElement("img"),this._elImage.style.display="none",this._el.appendChild(this._elImage),this._bSupportDataURI=null};return e.prototype.draw=function(a){var b=this._elImage,c=this._oContext,d=this._htOption,e=a.getModuleCount(),f=d.width/e,g=d.height/e,h=Math.round(f),i=Math.round(g);b.style.display="none",this.clear();for(var j=0;e>j;j++)for(var k=0;e>k;k++){var l=a.isDark(j,k),m=k*f,n=j*g;c.strokeStyle=l?d.colorDark:d.colorLight,c.lineWidth=1,c.fillStyle=l?d.colorDark:d.colorLight,c.fillRect(m,n,f,g),c.strokeRect(Math.floor(m)+.5,Math.floor(n)+.5,h,i),c.strokeRect(Math.ceil(m)-.5,Math.ceil(n)-.5,h,i)}this._bIsPainted=!0},e.prototype.makeImage=function(){this._bIsPainted&&d.call(this,a)},e.prototype.isPainted=function(){return this._bIsPainted},e.prototype.clear=function(){this._oContext.clearRect(0,0,this._elCanvas.width,this._elCanvas.height),this._bIsPainted=!1},e.prototype.round=function(a){return a?Math.floor(1e3*a)/1e3:a},e}():function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){for(var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d),g=['<table style="border:0;border-collapse:collapse;">'],h=0;d>h;h++){g.push("<tr>");for(var i=0;d>i;i++)g.push('<td style="border:0;border-collapse:collapse;padding:0;margin:0;width:'+e+"px;height:"+f+"px;background-color:"+(a.isDark(h,i)?b.colorDark:b.colorLight)+';"></td>');g.push("</tr>")}g.push("</table>"),c.innerHTML=g.join("");var j=c.childNodes[0],k=(b.width-j.offsetWidth)/2,l=(b.height-j.offsetHeight)/2;k>0&&l>0&&(j.style.margin=l+"px "+k+"px")},a.prototype.clear=function(){this._el.innerHTML=""},a}();QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];"string"==typeof a&&(a=document.getElementById(a)),this._android=n(),this._el=a,this._oQRCode=null,this._oDrawing=new q(this._el,this._htOption),this._htOption.text&&this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(r(a,this._htOption.correctLevel),this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode),this.makeImage()},QRCode.prototype.makeImage=function(){"function"==typeof this._oDrawing.makeImage&&(!this._android||this._android>=3)&&this._oDrawing.makeImage()},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();
+</script>
+<script>
+const LIB = {"FAM":["Fachliche Fallbearbeitung","Beratung und Bürgerkontakt","Führung und Steuerung","Recht und Regulierung","Daten und Analyse","Administrative Querschnittsaufgaben"],"FAMW":[22,18,15,12,13,20],"SZEN":[{"key":"konservativ","f":0.75,"sa":0.15,"sf":0.1,"desc":"Zurückhaltende Adoption, strenge Auslegung der Voraussetzungen."},{"key":"ausgewogen","f":1.0,"sa":0.2,"sf":0.12,"desc":"Referenzszenario entlang der dokumentierten Evidenz."},{"key":"ambitioniert","f":1.25,"sa":0.28,"sf":0.18,"desc":"Beschleunigte Adoption bei aktiv geschaffenen Voraussetzungen."}],"TASKS":[{"fam":"Fachliche Fallbearbeitung","name":"Eingangsprüfung von Gesuchen (Vollständigkeit, Formales)","share":14,"d":{"VOL":5,"REG":5,"DAT":4,"URT":2,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"sichere Anwendung, Kontrolle"},{"fam":"Fachliche Fallbearbeitung","name":"Zusammenfassung von Akten und Sachverhalt","share":16,"d":{"VOL":4,"REG":3,"DAT":4,"URT":3,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":5,"RECHT":4,"INTOP":4},"stufe":"Anwenden","skill":"Prompt- und Prüfkompetenz"},{"fam":"Fachliche Fallbearbeitung","name":"Entwurf von Verfügungen und Standardkorrespondenz","share":15,"d":{"VOL":4,"REG":4,"DAT":3,"URT":4,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"kritische Prüfung, Textqualität"},{"fam":"Fachliche Fallbearbeitung","name":"Ermessensentscheid und Interessenabwägung","share":12,"d":{"VOL":3,"REG":2,"DAT":2,"URT":5,"INT":4,"PHY":2,"ERK":2,"DSI":4,"REI":3,"RECHT":3,"INTOP":2},"stufe":"Gestalten","skill":"Urteilskompetenz und Begründung"},{"fam":"Fachliche Fallbearbeitung","name":"Kommunikation in komplexen oder strittigen Fällen","share":11,"d":{"VOL":3,"REG":2,"DAT":3,"URT":4,"INT":5,"PHY":3,"ERK":3,"DSI":3,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Gestalten","skill":"Gesprächsführung mit KI-Assistenz"},{"fam":"Fachliche Fallbearbeitung","name":"Datenerfassung und Systempflege","share":12,"d":{"VOL":4,"REG":5,"DAT":3,"URT":1,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":3,"RECHT":4,"INTOP":2},"stufe":"Steuern","skill":"Prozess- und Datenkompetenz"},{"fam":"Fachliche Fallbearbeitung","name":"Fristen- und Pendenzenkontrolle","share":10,"d":{"VOL":5,"REG":5,"DAT":4,"URT":1,"INT":1,"PHY":1,"ERK":5,"DSI":2,"REI":4,"RECHT":5,"INTOP":4},"stufe":"Anwenden","skill":"sichere Anwendung, Ausnahmebehandlung"},{"fam":"Fachliche Fallbearbeitung","name":"Rückfragen und Nachforderungen bei Gesuchstellenden","share":10,"d":{"VOL":4,"REG":3,"DAT":3,"URT":3,"INT":4,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Textassistenz, Verständlichkeit"},{"fam":"Beratung und Bürgerkontakt","name":"Beantwortung von Standardanfragen (Telefon, E-Mail)","share":18,"d":{"VOL":5,"REG":4,"DAT":4,"URT":2,"INT":4,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Assistenzgestützte Antwortqualität"},{"fam":"Beratung und Bürgerkontakt","name":"Persönliche Beratung in komplexen Lebenslagen","share":16,"d":{"VOL":3,"REG":2,"DAT":2,"URT":5,"INT":5,"PHY":4,"ERK":2,"DSI":4,"REI":3,"RECHT":3,"INTOP":2},"stufe":"Gestalten","skill":"Empathie, Gesprächsführung"},{"fam":"Beratung und Bürgerkontakt","name":"Terminvereinbarung und Triage von Anliegen","share":12,"d":{"VOL":5,"REG":4,"DAT":4,"URT":2,"INT":3,"PHY":1,"ERK":4,"DSI":2,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"sichere Anwendung, Eskalationsregeln"},{"fam":"Beratung und Bürgerkontakt","name":"Mehrsprachige Verständlichkeit von Informationen","share":10,"d":{"VOL":4,"REG":3,"DAT":4,"URT":2,"INT":3,"PHY":1,"ERK":4,"DSI":2,"REI":4,"RECHT":4,"INTOP":4},"stufe":"Anwenden","skill":"Sprachassistenz, Qualitätsprüfung"},{"fam":"Beratung und Bürgerkontakt","name":"Aufnahme und Dokumentation von Anliegen","share":12,"d":{"VOL":4,"REG":4,"DAT":3,"URT":2,"INT":3,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"strukturierte Erfassung"},{"fam":"Beratung und Bürgerkontakt","name":"Deeskalation und Konfliktgespräche","share":8,"d":{"VOL":2,"REG":1,"DAT":2,"URT":5,"INT":5,"PHY":4,"ERK":2,"DSI":3,"REI":3,"RECHT":3,"INTOP":2},"stufe":"Gestalten","skill":"Deeskalationskompetenz"},{"fam":"Beratung und Bürgerkontakt","name":"Wissensdatenbank pflegen (FAQ, Textbausteine)","share":12,"d":{"VOL":4,"REG":4,"DAT":4,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":2,"REI":4,"RECHT":4,"INTOP":4},"stufe":"Steuern","skill":"Kuratierung, Qualitätssicherung"},{"fam":"Beratung und Bürgerkontakt","name":"Feedback- und Beschwerdeauswertung","share":12,"d":{"VOL":4,"REG":3,"DAT":4,"URT":3,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Auswertung mit kritischer Prüfung"},{"fam":"Führung und Steuerung","name":"Berichts- und Reportingerstellung","share":16,"d":{"VOL":5,"REG":4,"DAT":4,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Berichtsassistenz, Prüfung"},{"fam":"Führung und Steuerung","name":"Ziel- und Massnahmencontrolling","share":12,"d":{"VOL":4,"REG":4,"DAT":4,"URT":3,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Dateninterpretation"},{"fam":"Führung und Steuerung","name":"Mitarbeitendengespräche und Entwicklung","share":14,"d":{"VOL":3,"REG":2,"DAT":2,"URT":5,"INT":5,"PHY":3,"ERK":2,"DSI":4,"REI":3,"RECHT":3,"INTOP":2},"stufe":"Gestalten","skill":"Führung der Mensch-KI-Zusammenarbeit"},{"fam":"Führung und Steuerung","name":"Priorisierung und Ressourcenzuteilung","share":12,"d":{"VOL":3,"REG":3,"DAT":3,"URT":5,"INT":3,"PHY":1,"ERK":3,"DSI":3,"REI":3,"RECHT":3,"INTOP":3},"stufe":"Gestalten","skill":"Entscheiden mit Szenarien"},{"fam":"Führung und Steuerung","name":"Sitzungsvorbereitung und Protokollierung","share":12,"d":{"VOL":5,"REG":4,"DAT":4,"URT":2,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":4},"stufe":"Anwenden","skill":"Protokollassistenz, Prüfung"},{"fam":"Führung und Steuerung","name":"Veränderungskommunikation","share":10,"d":{"VOL":3,"REG":2,"DAT":3,"URT":4,"INT":4,"PHY":2,"ERK":3,"DSI":3,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Gestalten","skill":"Change-Kommunikation"},{"fam":"Führung und Steuerung","name":"Risiko- und Qualitätsberichte konsolidieren","share":12,"d":{"VOL":4,"REG":4,"DAT":3,"URT":3,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Konsolidierung, Plausibilisierung"},{"fam":"Führung und Steuerung","name":"Steuerung externer Leistungserbringer","share":12,"d":{"VOL":3,"REG":3,"DAT":3,"URT":4,"INT":3,"PHY":1,"ERK":3,"DSI":3,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Steuern","skill":"Vertrags- und Leistungssteuerung"},{"fam":"Recht und Regulierung","name":"Rechtsrecherche und Präjudizienanalyse","share":16,"d":{"VOL":4,"REG":3,"DAT":4,"URT":4,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":4},"stufe":"Anwenden","skill":"Recherchekompetenz, Quellenkritik"},{"fam":"Recht und Regulierung","name":"Entwurf von Stellungnahmen und Gutachten","share":16,"d":{"VOL":3,"REG":3,"DAT":3,"URT":5,"INT":2,"PHY":1,"ERK":3,"DSI":4,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Gestalten","skill":"Argumentation, Begründung"},{"fam":"Recht und Regulierung","name":"Vertrags- und Vorlagenprüfung","share":14,"d":{"VOL":4,"REG":4,"DAT":4,"URT":4,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"kritische Prüfung"},{"fam":"Recht und Regulierung","name":"Rechtsmittelbearbeitung","share":12,"d":{"VOL":3,"REG":3,"DAT":3,"URT":5,"INT":3,"PHY":1,"ERK":3,"DSI":4,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Gestalten","skill":"Verfahrensführung"},{"fam":"Recht und Regulierung","name":"Normkonkordanz und Erlasspflege","share":10,"d":{"VOL":4,"REG":4,"DAT":4,"URT":3,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"strukturierte Textarbeit"},{"fam":"Recht und Regulierung","name":"Datenschutz- und IS-Vorprüfungen begleiten","share":12,"d":{"VOL":3,"REG":3,"DAT":3,"URT":4,"INT":2,"PHY":1,"ERK":3,"DSI":4,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Steuern","skill":"Governance-Kompetenz"},{"fam":"Recht und Regulierung","name":"Verhandlung und Vergleichsgespräche","share":8,"d":{"VOL":2,"REG":1,"DAT":2,"URT":5,"INT":5,"PHY":3,"ERK":2,"DSI":4,"REI":3,"RECHT":3,"INTOP":2},"stufe":"Gestalten","skill":"Verhandlungsführung"},{"fam":"Recht und Regulierung","name":"Anonymisierung und Publikationsvorbereitung","share":12,"d":{"VOL":4,"REG":4,"DAT":3,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":4,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"sichere Anwendung, Kontrolle"},{"fam":"Daten und Analyse","name":"Datenaufbereitung und Bereinigung","share":16,"d":{"VOL":5,"REG":4,"DAT":4,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Datenkompetenz, Prüfung"},{"fam":"Daten und Analyse","name":"Standardauswertungen und Dashboards","share":16,"d":{"VOL":5,"REG":4,"DAT":4,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":4},"stufe":"Anwenden","skill":"Auswertungsroutine"},{"fam":"Daten und Analyse","name":"Explorative Analysen und Hypothesenprüfung","share":12,"d":{"VOL":3,"REG":2,"DAT":4,"URT":4,"INT":2,"PHY":1,"ERK":3,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Gestalten","skill":"Analytisches Urteil"},{"fam":"Daten und Analyse","name":"Prognose- und Szenariomodelle pflegen","share":10,"d":{"VOL":3,"REG":3,"DAT":3,"URT":4,"INT":1,"PHY":1,"ERK":2,"DSI":3,"REI":3,"RECHT":3,"INTOP":3},"stufe":"Steuern","skill":"Modellverständnis, Grenzenwissen"},{"fam":"Daten und Analyse","name":"Datenqualitäts- und Metadatenmanagement","share":12,"d":{"VOL":4,"REG":4,"DAT":3,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":3,"REI":3,"RECHT":4,"INTOP":2},"stufe":"Steuern","skill":"Daten-Governance"},{"fam":"Daten und Analyse","name":"Visualisierung und Ergebniskommunikation","share":12,"d":{"VOL":4,"REG":3,"DAT":4,"URT":3,"INT":3,"PHY":1,"ERK":4,"DSI":2,"REI":4,"RECHT":4,"INTOP":4},"stufe":"Anwenden","skill":"Visualisierung, Storytelling"},{"fam":"Daten und Analyse","name":"Schnittstellen- und Automationsskripte","share":10,"d":{"VOL":4,"REG":4,"DAT":3,"URT":2,"INT":1,"PHY":1,"ERK":3,"DSI":3,"REI":3,"RECHT":4,"INTOP":2},"stufe":"Steuern","skill":"Automationskompetenz"},{"fam":"Daten und Analyse","name":"Ad-hoc-Datenanfragen beantworten","share":12,"d":{"VOL":4,"REG":3,"DAT":4,"URT":3,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"schnelle, geprüfte Antworten"},{"fam":"Administrative Querschnittsaufgaben","name":"Rechnungsprüfung und Kreditorenworkflow","share":14,"d":{"VOL":5,"REG":5,"DAT":4,"URT":1,"INT":1,"PHY":1,"ERK":5,"DSI":3,"REI":4,"RECHT":5,"INTOP":4},"stufe":"Anwenden","skill":"Ausnahmenbehandlung"},{"fam":"Administrative Querschnittsaufgaben","name":"Beschaffungsadministration","share":12,"d":{"VOL":4,"REG":4,"DAT":3,"URT":2,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Prozesssicherheit"},{"fam":"Administrative Querschnittsaufgaben","name":"Personaladministration (Ein-/Austritte, Mutationen)","share":14,"d":{"VOL":5,"REG":5,"DAT":4,"URT":2,"INT":2,"PHY":1,"ERK":4,"DSI":4,"REI":4,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"sichere Anwendung, Datenschutz"},{"fam":"Administrative Querschnittsaufgaben","name":"Terminkoordination und Raumbewirtschaftung","share":10,"d":{"VOL":5,"REG":4,"DAT":4,"URT":1,"INT":2,"PHY":1,"ERK":5,"DSI":2,"REI":4,"RECHT":5,"INTOP":4},"stufe":"Anwenden","skill":"Routinen mit Assistenz"},{"fam":"Administrative Querschnittsaufgaben","name":"Posteingang, Scanning und Ablage","share":12,"d":{"VOL":5,"REG":5,"DAT":3,"URT":1,"INT":1,"PHY":2,"ERK":5,"DSI":3,"REI":3,"RECHT":4,"INTOP":2},"stufe":"Steuern","skill":"Prozess- und Datenkompetenz"},{"fam":"Administrative Querschnittsaufgaben","name":"Reisemanagement und Spesen","share":10,"d":{"VOL":5,"REG":5,"DAT":4,"URT":1,"INT":1,"PHY":1,"ERK":5,"DSI":2,"REI":4,"RECHT":5,"INTOP":4},"stufe":"Anwenden","skill":"Routinen mit Assistenz"},{"fam":"Administrative Querschnittsaufgaben","name":"Onboarding-Logistik und Zugriffe","share":14,"d":{"VOL":4,"REG":4,"DAT":3,"URT":2,"INT":2,"PHY":1,"ERK":4,"DSI":3,"REI":3,"RECHT":4,"INTOP":2},"stufe":"Steuern","skill":"Prozessgestaltung"},{"fam":"Administrative Querschnittsaufgaben","name":"Archivierung und Aufbewahrungsfristen","share":14,"d":{"VOL":4,"REG":5,"DAT":3,"URT":2,"INT":1,"PHY":1,"ERK":4,"DSI":4,"REI":3,"RECHT":4,"INTOP":3},"stufe":"Anwenden","skill":"Regelkonforme Ablage"}]};
+/* ============================================================
+   ABSCHNITT 1: KONFIGURATION
+   ============================================================ */
+'use strict';
+const VERSION = 'JOB REDESIGN LAB v1.0 (2026-08-31)';
+const DB_ROOT = 'jrl_sessions';
+
+/* --------------------------------------------------------------
+   FIREBASE-KONFIGURATION: Werte aus der Firebase-Konsole einsetzen.
+   WICHTIG: Das Feld databaseURL fehlt im automatisch erzeugten
+   Snippet der Konsole und MUSS von Hand ergaenzt werden. Ohne
+   databaseURL verbindet sich die App nicht (haeufigster Fehler).
+   Region europe-west1 ergibt eine URL nach dem Muster
+   https://job-redesign-lab-default-rtdb.europe-west1.firebasedatabase.app
+   -------------------------------------------------------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyDNh1TLTsaLzOefPDVWNLlDdzFNKCqvHrY",
+  authDomain: "job-redesign-lab.firebaseapp.com",
+  databaseURL: "https://job-redesign-lab-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "job-redesign-lab",
+  storageBucket: "job-redesign-lab.firebasestorage.app",
+  messagingSenderId: "546096211431",
+  appId: "1:546096211431:web:f32830123043967da34942"
+};
+const FB_CONFIGURED = !/^PASTE/.test(firebaseConfig.apiKey) && !/^PASTE/.test(firebaseConfig.databaseURL);
+
+/* ============================================================
+   ABSCHNITT 2: INHALTE
+   LIB (48 Aufgabentypen, Familien, Szenarien) stammt unveraendert
+   aus dem geprueften Datenmodul des Excel-Simulationstools.
+   ============================================================ */
+const DIM_META = [
+  { k: 'VOL',   g: 'profil', label: 'Volumen und Wiederholung' },
+  { k: 'REG',   g: 'profil', label: 'Regelgebundenheit' },
+  { k: 'DAT',   g: 'profil', label: 'Datenlage und Qualität' },
+  { k: 'URT',   g: 'mensch', label: 'Menschliches Urteil' },
+  { k: 'INT',   g: 'mensch', label: 'Interaktion' },
+  { k: 'PHY',   g: 'mensch', label: 'Präsenz vor Ort' },
+  { k: 'ERK',   g: 'umsetz', label: 'Erklärbarkeit und Kontrolle' },
+  { k: 'DSI',   g: 'umsetz', label: 'Schutzbedarf der Daten' },
+  { k: 'REI',   g: 'umsetz', label: 'Technische Reife' }
+];
+const HIDDEN_DIMS = ['RECHT', 'INTOP'];
+
+const PULS = [
+  { q: 'Wie stark verändert KI Ihre eigene Arbeit in den nächsten drei Jahren?', opts: ['Kaum', 'Spürbar', 'Stark', 'Grundlegend'] },
+  { q: 'Welche Wirkung sehen Sie in Ihrem Umfeld zuerst?', opts: ['Automatisieren', 'Augmentieren', 'Menschlich stärken'] },
+  { q: 'Was ist heute die grösste Hürde für den KI-Einsatz?', opts: ['Datenqualität', 'Rechtsgrundlagen', 'Kompetenzen', 'Integration in Systeme', 'Akzeptanz'] },
+  { q: 'Wie viel Ihrer Arbeitszeit sind wiederkehrende Routineaufgaben?', opts: ['Unter 10 Prozent', '10 bis 25 Prozent', '25 bis 50 Prozent', 'Über 50 Prozent'] },
+  { q: 'Ihre Haltung zu KI am Arbeitsplatz?', opts: ['Neugierig', 'Abwartend', 'Skeptisch', 'Schon aktiv dabei'] },
+  { q: 'Was sollte die Verwaltung zuerst tun?', opts: ['Pilotieren', 'Kompetenzen aufbauen', 'Regeln klären', 'Prozesse standardisieren'] },
+  { q: 'Wofür sollte gewonnene Zeit primär eingesetzt werden?', opts: ['Mehr Zeit für Menschen', 'Höhere Qualität', 'Kürzere Durchlaufzeiten', 'Neue Aufgaben'] },
+  { q: 'Wie gut fühlen Sie sich zum Thema informiert?', opts: ['Gut', 'Teilweise', 'Wenig'] }
+];
+
+const CLOUD = [
+  { q: 'Welche Aufgabe würden Sie zuerst entlasten?', hint: 'Ein bis drei Stichworte, keine Namen.' },
+  { q: 'Gute Zusammenarbeit von Mensch und KI ist ...', hint: 'Ein bis drei Stichworte.' },
+  { q: 'Welche Kompetenz wird für Sie wichtiger?', hint: 'Ein bis drei Stichworte.' },
+  { q: 'Ihr Wort zu Job Redesign:', hint: 'Ein Begriff genügt.' }
+];
+
+/* Gemeinsamer Kompass: die sechs Proof-of-Method-Aufgaben, fuenf bewertete Dimensionen */
+const KOMP_DIMS = ['VOL', 'REG', 'DAT', 'URT', 'REI'];
+const KOMP_NAMES = [
+  'Eingangsprüfung von Gesuchen (Vollständigkeit, Formales)',
+  'Zusammenfassung von Akten und Sachverhalt',
+  'Entwurf von Verfügungen und Standardkorrespondenz',
+  'Ermessensentscheid und Interessenabwägung',
+  'Kommunikation in komplexen oder strittigen Fällen',
+  'Datenerfassung und Systempflege'
+];
+
+const VOTE_NAMES = [
+  'Standardauswertungen und Dashboards',
+  'Beantwortung von Standardanfragen (Telefon, E-Mail)',
+  'Rechnungsprüfung und Kreditorenworkflow',
+  'Persönliche Beratung in komplexen Lebenslagen',
+  'Terminkoordination und Raumbewirtschaftung',
+  'Mitarbeitendengespräche und Entwicklung'
+];
+const VOTE_AXES = {
+  b: { label: 'Betroffenheit', vals: ['gering', 'mittel', 'hoch'] },
+  h: { label: 'Zeithorizont', vals: ['kurzfristig', 'mittelfristig', 'langfristig'] }
+};
+
+const QUIZ_ROUNDS = ['Aufgaben-Challenge', 'Governance und Verantwortung', 'Zeithorizonte', 'Zukunftskompetenzen'];
+const QUIZ = [
+  /* Runde 1: Aufgaben-Challenge */
+  { r: 0, q: 'Eingangsprüfung von Gesuchen: hohes Volumen, klare Regeln, kaum Ermessen. Welche Wirkung passt?', opts: ['Automatisieren', 'Augmentieren', 'Menschlich stärken'], a: 0, time: 20, why: 'Hohe Regelbindung, tiefes Urteil und grosses Volumen sprechen für Automatisierung, der Mensch übernimmt Kontrolle und Ausnahmen.' },
+  { r: 0, q: 'Zusammenfassung umfangreicher Akten als Entwurf für die Sachbearbeitung?', opts: ['Vollständig automatisieren', 'Augmentieren', 'Nicht einsetzen'], a: 1, time: 20, why: 'KI liefert den Entwurf, die fachliche Prüfung und der Entscheid bleiben beim Menschen.' },
+  { r: 0, q: 'Ermessensentscheid mit Interessenabwägung. Wie geht die Studie damit um?', opts: ['Kurzfristig automatisieren', 'Mittelfristig automatisieren', 'Bewusst nicht automatisieren, KI höchstens als Assistenz'], a: 2, time: 22, why: 'Verantwortung, Abwägung und Begründung bleiben ausdrücklich menschlich. Das ist der vierte Machbarkeitsstatus.' },
+  { r: 0, q: 'Persönliche Beratung in komplexen Lebenslagen?', opts: ['Automatisieren', 'Menschlich stärken', 'Nur Chatbot'], a: 1, time: 20, why: 'Beziehung, Empathie und Präsenz stehen im Zentrum. KI kann höchstens im Hintergrund entlasten.' },
+  { r: 0, q: 'Entwurf von Verfügungen mit Textbausteinen und Wissensbasis?', opts: ['Augmentieren', 'Vollständig automatisieren', 'Bewusst nicht automatisieren'], a: 0, time: 20, why: 'Der Entwurf beschleunigt, kritische Prüfung und Textqualität bleiben menschliche Aufgaben.' },
+  { r: 0, q: 'Terminkoordination und Raumbewirtschaftung?', opts: ['Menschlich stärken', 'Automatisieren', 'Nicht verändern'], a: 1, time: 18, why: 'Klassische Routineaufgabe mit klaren Regeln. Der Mensch behandelt Sonderfälle.' },
+  /* Runde 2: Governance und Verantwortung */
+  { r: 1, q: 'Was gehört zwingend zur Governance-Prüfung eines Einsatzfelds?', opts: ['Nur die Kosten', 'Menschliche Verantwortung und Rechtsgrundlage', 'Nur die Modellgrösse'], a: 1, time: 20, why: 'Der Filter prüft unter anderem Zweck, Daten, Rechtsgrundlage, Nachvollziehbarkeit und menschliche Verantwortung.' },
+  { r: 1, q: 'Die Rechtsgrundlage eines Einsatzfelds ist unklar. Welcher Machbarkeitsstatus?', opts: ['Bestätigt', 'Plausibel mit Voraussetzungen', 'Offen zu klären'], a: 2, time: 20, why: 'Ohne geklärte Rechtsgrundlage gibt es keine Machbarkeitsbehauptung, zuerst wird geklärt.' },
+  { r: 1, q: 'Wofür steht der Status «bewusst nicht automatisieren»?', opts: ['Technisch unmöglich', 'Zu teuer', 'Verantwortung bleibt beim Menschen, KI höchstens als Assistenz'], a: 2, time: 22, why: 'Eine Wertentscheidung, keine Technikfrage: Entscheid und Begründung bleiben menschlich.' },
+  { r: 1, q: 'Wer trägt die Verantwortung für einen KI-gestützten Verwaltungsentscheid?', opts: ['Das System', 'Die zuständige Person in der Verwaltung', 'Die Herstellerin des Modells'], a: 1, time: 18, why: 'Menschliche Verantwortung ist nicht delegierbar, das verlangt auch der Governance-Filter.' },
+  { r: 1, q: 'Sehr hoher Schutzbedarf der Daten wirkt auf das kurzfristige Potenzial ...', opts: ['beschleunigend', 'dämpfend', 'gar nicht'], a: 1, time: 18, why: 'Hoher Schutzbedarf verlangt zusätzliche Klärungen und senkt das kurzfristig realisierbare Potenzial.' },
+  { r: 1, q: 'Was schützt die Studie vor Scheingenauigkeit?', opts: ['Mehr Nachkommastellen', 'Der vierstufige Machbarkeitsstatus', 'Grössere Stichproben'], a: 1, time: 20, why: 'Jede Aussage trägt ihren Status: bestätigt, plausibel mit Voraussetzungen, offen zu klären oder bewusst nicht automatisieren.' },
+  /* Runde 3: Zeithorizonte */
+  { r: 2, q: 'Reife Technik, gute Datenlage, klare Rechtsgrundlage. Welcher Zeithorizont?', opts: ['Kurzfristig', 'Langfristig', 'Ohne'], a: 0, time: 18, why: 'Wenn die Voraussetzungen weitgehend vorliegen, ist ein Einsatzfeld kurzfristig realisierbar.' },
+  { r: 2, q: 'Die Datenqualität ist schwach. Was heisst das für das Einsatzfeld?', opts: ['Sofort starten', 'Zuerst Voraussetzungen klären', 'Für immer verwerfen'], a: 1, time: 20, why: 'Schwache Daten verschieben den Horizont, das Feld wandert in die Klärung statt in die Umsetzung.' },
+  { r: 2, q: 'Welche Aufgabe bleibt ohne Automatisierungshorizont?', opts: ['Datenerfassung', 'Terminplanung', 'Ermessensentscheide mit voller menschlicher Verantwortung'], a: 2, time: 20, why: 'Für bewusst nicht automatisierte Aufgaben gibt es keinen Zeitpunkt, sondern eine klare Rollenzuweisung.' },
+  { r: 2, q: 'Warum arbeitet die Studie mit Szenarien statt mit einer Punktprognose?', opts: ['Bandbreiten sind ehrlicher als Scheingenauigkeit', 'Es sieht besser aus', 'Weil Daten fehlen'], a: 0, time: 20, why: 'Adoption und Reife sind unsicher, deshalb konservativ, ausgewogen und ambitioniert als Korridor.' },
+  { r: 2, q: 'Was verändert die Gesamtkennzahl am stärksten?', opts: ['Die Schriftart des Berichts', 'Adoptionsgrad und Governance-Strenge', 'Die Anzahl Sitzungen'], a: 1, time: 20, why: 'Die Sensitivitätsanalyse zeigt: Adoption und Governance-Strenge sind die grössten Hebel.' },
+  { r: 2, q: '«Kurzfristig realisierbar» bedeutet in der Studie ...', opts: ['ohne jede Prüfung', 'die Voraussetzungen liegen weitgehend vor', 'innerhalb einer Woche'], a: 1, time: 18, why: 'Kurzfristig heisst: Reife, Daten und Rechtsgrundlage sind weitgehend gegeben, Pilotierung ist möglich.' },
+  /* Runde 4: Zukunftskompetenzen */
+  { r: 3, q: 'Wie heissen die vier Skilling-Stufen der Studie?', opts: ['Lesen, Schreiben, Rechnen, Coden', 'Verstehen, Anwenden, Gestalten, Steuern', 'Basis, Fortgeschritten, Profi, Elite'], a: 1, time: 20, why: 'Der Vierklang reicht von Grundverständnis für alle bis zur Steuerung durch Governance-, Daten- und Technikrollen.' },
+  { r: 3, q: 'Prompt- und Prüfkompetenz gehört vor allem zur Stufe ...', opts: ['Verstehen', 'Anwenden', 'Steuern'], a: 1, time: 18, why: 'Anwenden heisst: Werkzeuge sicher nutzen und Ergebnisse kritisch prüfen.' },
+  { r: 3, q: 'Wer braucht die Stufe «Steuern» besonders?', opts: ['Alle gleich', 'Niemand', 'Governance-, Daten- und Technikrollen'], a: 2, time: 18, why: 'Steuern umfasst Portfolio, Regeln und die Führung der Mensch-KI-Zusammenarbeit.' },
+  { r: 3, q: 'Wichtigste menschliche Kompetenz bei augmentierten Aufgaben?', opts: ['Kritische Prüfung der Ergebnisse', 'Schnelles Kopieren', 'Blindes Vertrauen'], a: 0, time: 18, why: 'Der Entwurf kommt von der KI, Qualität und Verantwortung sichert der Mensch.' },
+  { r: 3, q: 'Woran richtet sich der Skilling-Bedarf in der Studie aus?', opts: ['An der Aufgabenveränderung', 'Am Dienstalter', 'Am Kalenderjahr'], a: 0, time: 18, why: 'Skilling folgt der Aufgabenveränderung, deshalb wird beides gemeinsam bewertet.' },
+  { r: 3, q: 'Was stärkt laut Dialogpraxis das Vertrauen in KI-Vorhaben?', opts: ['Geheimhaltung', 'Transparenz, klare Verantwortlichkeiten und sauberer Datenumgang', 'Schnelligkeit um jeden Preis'], a: 1, time: 20, why: 'Über konkrete Anwendungen mit klaren Regeln lässt sich differenziert und vertrauensbildend sprechen.' }
+];
+
+/* ============================================================
+   ABSCHNITT 3: RULESET
+   Formeln identisch mit dem Excel-Simulationstool (Beilage 06).
+   ============================================================ */
+const STATI = ['bestätigt', 'plausibel mit Voraussetzungen', 'offen zu klären', 'bewusst nicht automatisieren'];
+const WIRKUNGEN = ['Automatisieren', 'Augmentieren', 'Menschlich stärken'];
+const r2 = x => Math.round(x * 100) / 100;
+const r4 = x => Math.round(x * 10000) / 10000;
+
+function assess(d) {
+  const prof = r2((d.VOL + d.REG + d.DAT) / 3);
+  const mensch = r2((d.URT + d.INT + d.PHY) / 3);
+  const umsetz = r2((d.ERK + (6 - d.DSI) + d.REI) / 3);
+  let wirkung;
+  if (mensch >= 3.5) wirkung = 'Menschlich stärken';
+  else if (d.REG >= 4 && d.URT <= 2 && d.VOL >= 4) wirkung = 'Automatisieren';
+  else wirkung = 'Augmentieren';
+  let horizont;
+  if (wirkung === 'Menschlich stärken' && d.URT >= 5) horizont = 'ohne';
+  else {
+    const m = Math.min(d.REI, d.DAT, d.RECHT);
+    horizont = m >= 4 ? 'kurzfristig' : (m <= 2 ? 'langfristig' : 'mittelfristig');
+  }
+  let status;
+  if (wirkung === 'Menschlich stärken' && d.URT >= 5) status = 'bewusst nicht automatisieren';
+  else if (Math.min(d.DAT, d.RECHT, d.INTOP) <= 2 || d.DSI >= 5) status = 'offen zu klären';
+  else if (Math.min(d.DAT, d.RECHT, d.INTOP) >= 4 && d.DSI <= 3) status = 'bestätigt';
+  else status = 'plausibel mit Voraussetzungen';
+  let betroffenheit;
+  if (status === 'bewusst nicht automatisieren') betroffenheit = 'gering';
+  else if ((wirkung === 'Automatisieren' || wirkung === 'Augmentieren') && d.VOL >= 4 && d.DAT >= 3 && d.INTOP >= 3) betroffenheit = 'hoch';
+  else if (wirkung === 'Menschlich stärken') betroffenheit = d.INT >= 4 ? 'mittel' : 'gering';
+  else betroffenheit = 'mittel';
+  const base = wirkung === 'Automatisieren' ? 0.55 : (wirkung === 'Augmentieren' ? 0.35 : 0.18);
+  const stf = status === 'bestätigt' ? 1 : (status === 'plausibel mit Voraussetzungen' ? 0.75 : (status === 'offen zu klären' ? 0.4 : 0.5));
+  const pot = r4(Math.min(0.75, base * stf * (0.6 + 0.08 * prof) * (0.6 + 0.08 * umsetz)));
+  return { prof, mensch, umsetz, wirkung, horizont, status, betroffenheit, pot };
+}
+
+const ADOPT = 0.7, GOVF = 1.0;
+const famW = fam => LIB.FAMW[LIB.FAM.indexOf(fam)];
+function beitrag(task, f) {
+  const a = assess(task.d);
+  return famW(task.fam) * task.share / 100 * a.pot * f * ADOPT * GOVF;
+}
+function kennzahl(szenKey) {
+  const s = LIB.SZEN.find(x => x.key === szenKey);
+  return LIB.TASKS.reduce((sum, t) => sum + beitrag(t, s.f), 0);
+}
+
+function whyText(a, d) {
+  const w = [];
+  if (a.wirkung === 'Automatisieren') w.push('Hohe Regelbindung und tiefes Urteil bei grossem Volumen.');
+  else if (a.wirkung === 'Menschlich stärken') w.push('Urteil, Interaktion oder Präsenz prägen die Aufgabe.');
+  else w.push('KI unterstützt Entwurf und Analyse, der Entscheid bleibt menschlich.');
+  if (a.status === 'bewusst nicht automatisieren') w.push('Volle menschliche Verantwortung, KI höchstens als Assistenz.');
+  else if (a.status === 'offen zu klären') w.push(d.DSI >= 5 ? 'Sehr hoher Schutzbedarf verlangt vorgängige Klärung.' : 'Daten, Rechtsgrundlage oder Integration zuerst klären.');
+  else if (a.status === 'bestätigt') w.push('Daten, Rechtsgrundlage und Integration liegen weitgehend vor.');
+  else w.push('Machbar, sobald benannte Voraussetzungen geschaffen sind.');
+  if (a.horizont === 'kurzfristig') w.push('Reife, Daten und Rechtslage erlauben eine baldige Pilotierung.');
+  else if (a.horizont === 'langfristig') w.push('Zentrale Voraussetzungen fehlen noch, der Horizont liegt weiter hinten.');
+  else if (a.horizont === 'ohne') w.push('Kein Automatisierungszeitpunkt, sondern klare Rollen für Mensch und Assistenz.');
+  return w;
+}
+
+/* Fixe Erwartungswerte, maschinell aus dem Excel-Regelwerk berechnet.
+   VALIDATE prueft sie beim Laden, die Testsuite ebenfalls. */
+const FIXTURES = {
+ "pom": [
+  {
+   "name": "Eingangsprüfung von Gesuchen (Vollständigkeit, Formales)",
+   "wirkung": "Automatisieren",
+   "horizont": "kurzfristig",
+   "status": "plausibel mit Voraussetzungen",
+   "betroffenheit": "hoch"
+  },
+  {
+   "name": "Zusammenfassung von Akten und Sachverhalt",
+   "wirkung": "Augmentieren",
+   "horizont": "kurzfristig",
+   "status": "bestätigt",
+   "betroffenheit": "hoch"
+  },
+  {
+   "name": "Entwurf von Verfügungen und Standardkorrespondenz",
+   "wirkung": "Augmentieren",
+   "horizont": "mittelfristig",
+   "status": "plausibel mit Voraussetzungen",
+   "betroffenheit": "hoch"
+  },
+  {
+   "name": "Ermessensentscheid und Interessenabwägung",
+   "wirkung": "Menschlich stärken",
+   "horizont": "ohne",
+   "status": "bewusst nicht automatisieren",
+   "betroffenheit": "gering"
+  },
+  {
+   "name": "Kommunikation in komplexen oder strittigen Fällen",
+   "wirkung": "Menschlich stärken",
+   "horizont": "mittelfristig",
+   "status": "plausibel mit Voraussetzungen",
+   "betroffenheit": "mittel"
+  },
+  {
+   "name": "Datenerfassung und Systempflege",
+   "wirkung": "Automatisieren",
+   "horizont": "mittelfristig",
+   "status": "offen zu klären",
+   "betroffenheit": "mittel"
+  }
+ ],
+ "kpi": {
+  "konservativ": 13.89,
+  "ausgewogen": 18.52,
+  "ambitioniert": 23.15
+ },
+ "counts": {
+  "wirkung": {
+   "Automatisieren": 22,
+   "Augmentieren": 20,
+   "Menschlich stärken": 6
+  },
+  "status": {
+   "plausibel mit Voraussetzungen": 27,
+   "bestätigt": 11,
+   "bewusst nicht automatisieren": 5,
+   "offen zu klären": 5
+  }
+ }
+};
+
+function findTask(name) {
+  const i = LIB.TASKS.findIndex(t => t.name === name);
+  return i;
+}
+
+/* ============================================================
+   ABSCHNITT 4: UTILITIES
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+};
+const clearNode = n => { while (n.firstChild) n.removeChild(n.firstChild); };
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const fmtPct = v => v.toFixed(1).replace('.', ',') + '%';
+
+let toastTimer = null;
+function toast(msg, isErr) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), isErr ? 5200 : 3200);
+}
+function withTimeout(promise, label, ms) {
+  ms = ms || 9000;
+  return new Promise((resolve, reject) => {
+    const to = setTimeout(() => reject(new Error(label + ': Zeitüberschreitung nach 9 Sekunden. Bitte Verbindung prüfen und erneut versuchen.')), ms);
+    Promise.resolve(promise).then(v => { clearTimeout(to); resolve(v); },
+      e => { clearTimeout(to); reject(new Error(label + ': ' + (e && e.message ? e.message : 'Fehler'))); });
+  });
+}
+function setBusy(btn, busy) {
+  if (!btn) return;
+  btn.classList.toggle('is-busy', !!busy);
+  btn.disabled = !!busy;
+}
+const rnd = arr => arr[Math.floor(Math.random() * arr.length)];
+function shuffled(n) {
+  const a = Array.from({ length: n }, (_, i) => i);
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function median(nums) {
+  const a = nums.slice().sort((x, y) => x - y);
+  if (!a.length) return 0;
+  const m = a.length >> 1;
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+function normWord(s) {
+  return String(s).replace(/\s+/g, ' ').trim().slice(0, 24);
+}
+const STCLS = { 'bestätigt': 'st-ok', 'plausibel mit Voraussetzungen': 'st-plaus', 'offen zu klären': 'st-offen', 'bewusst nicht automatisieren': 'st-bewusst' };
+const STDOT = { 'bestätigt': '#0E8A5F', 'plausibel mit Voraussetzungen': '#B98714', 'offen zu klären': '#C0392B', 'bewusst nicht automatisieren': '#5B4FC0' };
+const WKCLS = { 'Automatisieren': 'wk-auto', 'Augmentieren': 'wk-aug', 'Menschlich stärken': 'wk-mensch' };
+const WKCOL = { 'Automatisieren': '#0F6FB4', 'Augmentieren': '#0E8A5F', 'Menschlich stärken': '#C9A227' };
+const BLUE = '#0F6FB4', DEEP = '#0B5A93', BRIGHT = '#1E9CD7', FIELD = '#D6EEF9', INK = '#10314B';
+
+/* ============================================================
+   ABSCHNITT 5: STATE UND SCREEN-ENGINE
+   ============================================================ */
+const state = {
+  screen: 'home',
+  demo: false,
+  net: null,
+  role: null,
+  code: '',
+  pid: '',
+  name: '',
+  session: null,          /* kompletter Snapshot: {meta,playlist,deal,players,live,scores} */
+  hostLog: {},            /* {mIdx:{pid:{recvAt}}} lokal beim Host fuer Antwortzeiten */
+  playlist: [],           /* Build-Phase */
+  erleben: { tab: 'kompass', taskIdx: 0, customName: '', d: null, szen: 'ausgewogen', fam: '' },
+  playerSent: {},         /* {mIdx:true|antwort} lokal */
+  lastQuizFeedback: null
+};
+const SCREENS = ['home', 'erleben', 'build', 'lobby', 'hostmod', 'hostend', 'join', 'player'];
+function show(screen) {
+  state.screen = screen;
+  SCREENS.forEach(s => $('scr-' + s).classList.toggle('is-active', s === screen));
+  window.scrollTo(0, 0);
+  if (screen === 'home') Hero.start(); else Hero.stop();
+}
+function setConn(on) {
+  document.querySelectorAll('.conn').forEach(c => {
+    c.classList.toggle('on', on === true);
+    c.classList.toggle('off', on === false);
+  });
+}
+
+/* ============================================================
+   ABSCHNITT 6: HERO-CANVAS «Aufgaben ordnen sich neu»
+   ============================================================ */
+const Hero = (() => {
+  const cv = $('hero-canvas');
+  const ctx = cv.getContext('2d');
+  let chips = [], raf = 0, running = false, W = 0, H = 0, DPR = 1, t0 = 0, mx = .5, my = .5;
+  const N = () => (W < 640 ? 34 : 68);
+  function diagY(x) { return H * 0.995 - (x / W) * H * 0.62; }  /* Wappendiagonale von links unten nach rechts oben */
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    seed();
+    if (REDUCED) drawStatic();
+  }
+  function seed() {
+    chips = [];
+    const n = N();
+    for (let i = 0; i < n; i++) {
+      const below = i < n * 0.62;
+      const x = Math.random() * W, y = Math.random() * H;
+      chips.push({
+        x, y, hx: x, hy: y,
+        z: 0.4 + Math.random() * 0.6,
+        w: 26 + Math.random() * 46,
+        blue: below,
+        vx: (Math.random() - .5) * .18, vy: (Math.random() - .5) * .14,
+        tx: 0, ty: 0
+      });
+    }
+    chips.forEach(c => {
+      const x = Math.random() * W;
+      const yl = diagY(x);
+      c.tx = x;
+      c.ty = c.blue ? yl + 20 + Math.random() * Math.max(30, H - yl - 60)
+                    : Math.max(24, yl - 24 - Math.random() * Math.max(30, yl - 60));
+    });
+  }
+  function chipRect(c, px, py) {
+    const w = c.w, h = w * 0.42, r = 7;
+    ctx.beginPath();
+    ctx.moveTo(px - w / 2 + r, py - h / 2);
+    ctx.arcTo(px + w / 2, py - h / 2, px + w / 2, py + h / 2, r);
+    ctx.arcTo(px + w / 2, py + h / 2, px - w / 2, py + h / 2, r);
+    ctx.arcTo(px - w / 2, py + h / 2, px - w / 2, py - h / 2, r);
+    ctx.arcTo(px - w / 2, py - h / 2, px + w / 2, py - h / 2, r);
+    ctx.closePath();
+  }
+  function drawBase() {
+    ctx.clearRect(0, 0, W, H);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#FFFFFF'); g.addColorStop(1, '#F4FAFE');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.beginPath();
+    ctx.moveTo(0, H); ctx.lineTo(0, diagY(0)); ctx.lineTo(W, diagY(W)); ctx.lineTo(W, H); ctx.closePath();
+    const bg = ctx.createLinearGradient(0, diagY(W), 0, H);
+    bg.addColorStop(0, BLUE); bg.addColorStop(1, DEEP);
+    ctx.fillStyle = bg; ctx.fill();
+  }
+  function frame(now) {
+    if (!running) return;
+    if (!t0) t0 = now;
+    const T = (now - t0) / 1000;
+    const cyc = T % 8;
+    const gather = cyc > 5.4 ? clamp((cyc - 5.4) / 1.2, 0, 1) : (cyc < 1.0 ? 1 - clamp(cyc / 1.0, 0, 1) : 0);
+    const ease = gather < .5 ? 2 * gather * gather : 1 - Math.pow(-2 * gather + 2, 2) / 2;
+    drawBase();
+    const px = (mx - .5) * 18, py = (my - .5) * 12;
+    for (const c of chips) {
+      c.hx += c.vx; c.hy += c.vy;
+      if (c.hx < -60) c.hx = W + 60; if (c.hx > W + 60) c.hx = -60;
+      if (c.hy < -40) c.hy = H + 40; if (c.hy > H + 40) c.hy = -40;
+      c.x = c.hx + (c.tx - c.hx) * ease + px * c.z;
+      c.y = c.hy + (c.ty - c.hy) * ease + py * c.z;
+    }
+    ctx.lineWidth = 1;
+    for (let i = 0; i < chips.length; i++) for (let j = i + 1; j < chips.length; j++) {
+      const a = chips[i], b = chips[j];
+      const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+      if (d2 < 8600) {
+        const o = (1 - d2 / 8600) * .22;
+        ctx.strokeStyle = a.blue && b.blue ? 'rgba(255,255,255,' + o + ')' : 'rgba(15,111,180,' + o + ')';
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+    for (const c of chips) {
+      const under = c.y > diagY(c.x);
+      chipRect(c, c.x, c.y);
+      if (under) {
+        ctx.fillStyle = c.blue ? 'rgba(255,255,255,' + (0.16 + 0.5 * c.z) + ')' : 'rgba(214,238,249,' + (0.5 + 0.4 * c.z) + ')';
+      } else {
+        ctx.fillStyle = c.blue ? 'rgba(15,111,180,' + (0.16 + 0.55 * c.z) + ')' : 'rgba(30,156,215,' + (0.10 + 0.30 * c.z) + ')';
+      }
+      ctx.fill();
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function drawStatic() {
+    drawBase();
+    for (const c of chips) {
+      const px = (c.tx * 0.6 + c.hx * 0.4), py = (c.ty * 0.6 + c.hy * 0.4);
+      chipRect(c, px, py);
+      const under = py > diagY(px);
+      ctx.fillStyle = under ? 'rgba(255,255,255,.45)' : 'rgba(15,111,180,.35)';
+      ctx.fill();
+    }
+  }
+  function start() {
+    resize();
+    if (REDUCED) { drawStatic(); return; }
+    if (running) return;
+    running = true; t0 = 0;
+    raf = requestAnimationFrame(frame);
+  }
+  function stop() { running = false; cancelAnimationFrame(raf); }
+  window.addEventListener('resize', () => { if (state.screen === 'home') resize(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stop();
+    else if (state.screen === 'home') start();
+  });
+  document.addEventListener('mousemove', e => { mx = e.clientX / Math.max(1, window.innerWidth); my = e.clientY / Math.max(1, window.innerHeight); });
+  return { start, stop };
+})();
+
+/* ============================================================
+   ABSCHNITT 7: CANVAS-ZEICHNER (Radar, Cloud, Export)
+   ============================================================ */
+function fitCanvas(cv, cssH) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const w = cv.clientWidth || cv.parentElement.clientWidth || 600;
+  cv.style.height = cssH + 'px';
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(cssH * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, w, h: cssH };
+}
+function drawRadar(ctx, cx, cy, R, labels, seriesList, opts) {
+  const n = labels.length;
+  const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  ctx.save();
+  ctx.strokeStyle = FIELD; ctx.fillStyle = '#6F92A9'; ctx.lineWidth = 1;
+  ctx.font = '600 11px "Segoe UI",Roboto,sans-serif'; ctx.textAlign = 'center';
+  for (let ring = 1; ring <= 5; ring++) {
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const a = ang(i % n), r = R * ring / 5;
+      const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+  }
+  for (let i = 0; i < n; i++) {
+    const a = ang(i);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.stroke();
+    const lx = cx + Math.cos(a) * (R + 16), ly = cy + Math.sin(a) * (R + 16) + 4;
+    ctx.fillText(labels[i], lx, ly);
+  }
+  for (const s of seriesList) {
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const a = ang(i % n), r = R * clamp(s.vals[i % n], 0, 5) / 5;
+      const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = s.fill; ctx.fill();
+    ctx.strokeStyle = s.stroke; ctx.lineWidth = s.width || 2.5; ctx.stroke();
+    if (s.dots) for (let i = 0; i < n; i++) {
+      const a = ang(i), r = R * clamp(s.vals[i], 0, 5) / 5;
+      ctx.beginPath(); ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 3.6, 0, 7);
+      ctx.fillStyle = s.stroke; ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+function drawCloud(ctx, w, h, words) {
+  ctx.save();
+  ctx.clearRect(0, 0, w, h);
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const list = Object.entries(words).map(([t, c]) => ({ t, c })).sort((a, b) => b.c - a.c).slice(0, 40);
+  if (!list.length) {
+    ctx.fillStyle = '#8FB4CC'; ctx.font = '600 15px "Segoe UI",Roboto,sans-serif';
+    ctx.fillText('Die ersten Begriffe erscheinen gleich hier.', w / 2, h / 2);
+    ctx.restore(); return;
+  }
+  const max = list[0].c;
+  const placed = [];
+  const cols = [DEEP, BLUE, BRIGHT, '#5FA8D6'];
+  list.forEach((it, idx) => {
+    const fs = 15 + 34 * Math.sqrt(it.c / max);
+    ctx.font = '800 ' + fs + 'px "Segoe UI",Roboto,sans-serif';
+    const tw = ctx.measureText(it.t).width + 16, th = fs + 10;
+    let x = w / 2, y = h / 2, ok = false;
+    for (let s = 0; s < 320 && !ok; s++) {
+      const a = 0.55 * s, r = 3.4 * Math.sqrt(s) * (1 + idx * 0.004);
+      x = w / 2 + Math.cos(a) * r * 2.1;
+      y = h / 2 + Math.sin(a) * r;
+      if (x - tw / 2 < 6 || x + tw / 2 > w - 6 || y - th / 2 < 6 || y + th / 2 > h - 6) continue;
+      ok = !placed.some(p => Math.abs(p.x - x) < (p.tw + tw) / 2 && Math.abs(p.y - y) < (p.th + th) / 2);
+    }
+    if (!ok) return;
+    placed.push({ x, y, tw, th });
+    ctx.fillStyle = cols[idx % cols.length];
+    ctx.fillText(it.t, x, y);
+  });
+  ctx.restore();
+}
+function countUp(node, target, dec, suffix, ms) {
+  if (REDUCED) { node.textContent = target.toFixed(dec).replace('.', ',') + (suffix || ''); return; }
+  const start = performance.now(), from = 0;
+  function step(now) {
+    const p = clamp((now - start) / (ms || 700), 0, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    node.textContent = (from + (target - from) * e).toFixed(dec).replace('.', ',') + (suffix || '');
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* PNG-Export: weisser 1600x900-Rahmen mit Kopfzeile, Zeichnung via drawFn(ctx,w,h) */
+function exportPNG(title, sub, drawFn) {
+  try {
+    const cv = document.createElement('canvas');
+    cv.width = 1600; cv.height = 900;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1600, 900);
+    ctx.fillStyle = BLUE; ctx.fillRect(0, 0, 1600, 10);
+    ctx.beginPath(); ctx.moveTo(0, 10); ctx.lineTo(120, 10); ctx.lineTo(96, 26); ctx.lineTo(0, 26); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = INK; ctx.font = '800 40px "Segoe UI",Roboto,sans-serif';
+    ctx.fillText(title, 60, 86);
+    ctx.fillStyle = '#3E5A72'; ctx.font = '400 22px "Segoe UI",Roboto,sans-serif';
+    ctx.fillText(sub, 60, 122);
+    ctx.font = '400 18px "Segoe UI",Roboto,sans-serif';
+    ctx.fillText('JOB REDESIGN LAB', 60, 866);
+    ctx.save(); ctx.translate(60, 160); drawFn(ctx, 1480, 660); ctx.restore();
+    const a = document.createElement('a');
+    a.download = 'job-redesign-lab-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+    a.href = cv.toDataURL('image/png');
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('Bild gespeichert.');
+  } catch (e) {
+    toast('Export nicht möglich: ' + e.message, true);
+  }
+}
+function drawBarsPNG(ctx, w, h, items, opts) {
+  const max = Math.max(1, ...items.map(i => i.v));
+  const rowH = Math.min(84, h / Math.max(1, items.length));
+  ctx.font = '700 24px "Segoe UI",Roboto,sans-serif';
+  items.forEach((it, i) => {
+    const y = i * rowH + rowH / 2;
+    ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(it.label.slice(0, 34), 0, y);
+    const bx = 430, bw = w - bx - 90;
+    ctx.fillStyle = '#EAF6FD'; ctx.fillRect(bx, y - 18, bw, 36);
+    ctx.fillStyle = it.color || BLUE;
+    ctx.fillRect(bx, y - 18, bw * it.v / max, 36);
+    ctx.fillStyle = DEEP; ctx.textAlign = 'right';
+    ctx.fillText(String(it.v), w, y);
+    ctx.textAlign = 'left';
+  });
+}
+
+/* ============================================================
+   ABSCHNITT 8: NETZ-ABSTRAKTION
+   Ein Vertrag, zwei Implementierungen: Firebase (Workshop) und
+   Lokal (Demo, Tests). Der Host schreibt, alle anderen lesen.
+   ============================================================ */
+function createNet(mode) {
+  if (mode === 'local') return createLocalNet();
+  return createFirebaseNet();
+}
+
+function createLocalNet() {
+  const store = {};
+  const watchers = {};
+  const connCbs = new Set();
+  function notify(code) {
+    const snap = store[code] ? JSON.parse(JSON.stringify(store[code])) : null;
+    (watchers[code] || new Set()).forEach(cb => { try { cb(snap); } catch (e) { console.error(e); } });
+  }
+  function setPath(code, path, val) {
+    if (!store[code]) store[code] = {};
+    const keys = path.split('/').filter(Boolean);
+    let o = store[code];
+    for (let i = 0; i < keys.length - 1; i++) { if (typeof o[keys[i]] !== 'object' || o[keys[i]] === null) o[keys[i]] = {}; o = o[keys[i]]; }
+    o[keys[keys.length - 1]] = val;
+  }
+  return {
+    mode: 'local',
+    codeExists: code => Promise.resolve(!!store[code]),
+    createSession: (code, data) => { if (store[code]) return Promise.reject(new Error('Code belegt')); store[code] = JSON.parse(JSON.stringify(data)); queueMicrotask(() => notify(code)); return Promise.resolve(); },
+    update: (code, patch) => { Object.entries(patch).forEach(([p, v]) => setPath(code, p, v)); queueMicrotask(() => notify(code)); return Promise.resolve(); },
+    writePlayer: (code, pid, obj) => { setPath(code, 'players/' + pid, obj); queueMicrotask(() => notify(code)); return Promise.resolve(); },
+    writeLive: (code, sub, val) => { setPath(code, 'live/' + sub, val); queueMicrotask(() => notify(code)); return Promise.resolve(); },
+    watch: (code, cb) => { (watchers[code] = watchers[code] || new Set()).add(cb); queueMicrotask(() => notify(code)); return () => watchers[code] && watchers[code].delete(cb); },
+    connWatch: cb => { connCbs.add(cb); queueMicrotask(() => cb(true)); return () => connCbs.delete(cb); },
+    deleteSession: code => { delete store[code]; queueMicrotask(() => notify(code)); return Promise.resolve(); }
+  };
+}
+
+function createFirebaseNet() {
+  let db = null;
+  function ensure() {
+    if (db) return db;
+    if (!FB_CONFIGURED) throw new Error('Firebase ist noch nicht konfiguriert. Bitte firebaseConfig in der Datei ausfüllen (inklusive databaseURL).');
+    if (typeof firebase === 'undefined') throw new Error('Firebase-SDK nicht geladen. Bitte Internetverbindung prüfen.');
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    return db;
+  }
+  const ref = code => ensure().ref(DB_ROOT + '/' + code);
+  return {
+    mode: 'fb',
+    codeExists: code => ref(code).child('meta/v').get().then(s => s.exists()),
+    createSession: (code, data) => ref(code).set(data),
+    update: (code, patch) => ref(code).update(patch),
+    writePlayer: (code, pid, obj) => ref(code).child('players/' + pid).set(obj),
+    writeLive: (code, sub, val) => ref(code).child('live/' + sub).set(val),
+    watch: (code, cb) => { const r = ref(code); const h = r.on('value', s => cb(s.val())); return () => r.off('value', h); },
+    connWatch: cb => { const r = ensure().ref('.info/connected'); const h = r.on('value', s => cb(s.val() === true)); return () => r.off('value', h); },
+    deleteSession: code => ref(code).remove()
+  };
+}
+
+/* ============================================================
+   ABSCHNITT 9: ERLEBEN (Kompass und Landkarte)
+   ============================================================ */
+const Erleben = (() => {
+  const CURATED = KOMP_NAMES.concat(VOTE_NAMES);
+  function currentDims() {
+    const e = state.erleben;
+    if (e.d) return e.d;
+    const t = LIB.TASKS[e.taskIdx];
+    return Object.assign({}, t.d);
+  }
+  function baseTask() {
+    return state.erleben.customName !== null && state.erleben.taskIdx < 0 ? null : LIB.TASKS[state.erleben.taskIdx];
+  }
+  function initTaskSelect() {
+    const sel = $('k-task');
+    clearNode(sel);
+    CURATED.forEach(name => {
+      const idx = findTask(name);
+      const o = el('option', '', LIB.TASKS[idx].name);
+      o.value = String(idx);
+      sel.appendChild(o);
+    });
+    const own = el('option', '', 'Eigene Aufgabe beschreiben ...');
+    own.value = '-1';
+    sel.appendChild(own);
+    sel.addEventListener('change', () => {
+      const v = parseInt(sel.value, 10);
+      if (v >= 0) {
+        state.erleben.taskIdx = v;
+        state.erleben.d = Object.assign({}, LIB.TASKS[v].d);
+        $('k-custom').classList.add('hide');
+      } else {
+        state.erleben.taskIdx = -1;
+        const d = { RECHT: 3, INTOP: 3 };
+        DIM_META.forEach(m => d[m.k] = 3);
+        state.erleben.d = d;
+        $('k-custom').classList.remove('hide');
+        $('k-custom').focus();
+      }
+      syncSliders();
+      paintKompass();
+    });
+  }
+  function buildSliders() {
+    const groups = { profil: $('sg-profil'), mensch: $('sg-mensch'), umsetz: $('sg-umsetz') };
+    Object.values(groups).forEach(clearNode);
+    DIM_META.forEach(m => {
+      const row = el('div', 'sl');
+      const lab = el('label', '', m.label);
+      lab.htmlFor = 'sl-' + m.k;
+      const inp = el('input');
+      inp.type = 'range'; inp.min = '1'; inp.max = '5'; inp.step = '1'; inp.id = 'sl-' + m.k;
+      const out = el('output', '', '3');
+      inp.addEventListener('input', () => {
+        const d = currentDims();
+        d[m.k] = parseInt(inp.value, 10);
+        state.erleben.d = d;
+        out.textContent = inp.value;
+        inp.style.setProperty('--fill', ((inp.value - 1) / 4 * 100) + '%');
+        paintKompass();
+      });
+      row.appendChild(lab); row.appendChild(inp); row.appendChild(out);
+      groups[m.g].appendChild(row);
+    });
+  }
+  function syncSliders() {
+    const d = currentDims();
+    DIM_META.forEach(m => {
+      const inp = $('sl-' + m.k);
+      inp.value = String(d[m.k]);
+      inp.nextElementSibling.textContent = String(d[m.k]);
+      inp.style.setProperty('--fill', ((d[m.k] - 1) / 4 * 100) + '%');
+    });
+  }
+  function resultLine(key, chipText, chipCls, why) {
+    const line = el('div', 'result-line');
+    line.appendChild(el('div', 'k', key));
+    const box = el('div');
+    const chip = el('span', 'chip pop ' + chipCls, chipText);
+    box.appendChild(chip);
+    if (why) box.appendChild(el('div', 'why', why));
+    line.appendChild(box);
+    return line;
+  }
+  function paintKompass() {
+    const d = currentDims();
+    const a = assess(d);
+    const whys = whyText(a, d);
+    const res = $('k-result');
+    clearNode(res);
+    res.appendChild(resultLine('Wirkung', a.wirkung, WKCLS[a.wirkung], whys[0]));
+    res.appendChild(resultLine('Machbarkeitsstatus', a.status, STCLS[a.status], whys[1]));
+    res.appendChild(resultLine('Zeithorizont', a.horizont, 'chip-dim', whys[2]));
+    res.appendChild(resultLine('Betroffenheit', a.betroffenheit, 'chip-dim',
+      'Profil ' + a.prof.toFixed(1).replace('.', ',') + ', Mensch ' + a.mensch.toFixed(1).replace('.', ',') + ', Umsetzung ' + a.umsetz.toFixed(1).replace('.', ',')));
+    const t = baseTask();
+    const note = $('k-fixnote');
+    if (state.erleben.taskIdx < 0) {
+      note.textContent = 'Rechtsgrundlage und Integrationsreife sind bei eigenen Aufgaben neutral (Wert 3) angenommen und werden in der Studie separat geprüft.';
+    } else {
+      note.textContent = 'Fixwerte dieser Aufgabe aus der Bibliothek: Rechtsgrundlage ' + t.d.RECHT + ' von 5, Integrationsreife ' + t.d.INTOP + ' von 5. Zeitanteil in der Familie: ' + t.share + ' Prozent.';
+    }
+    const { ctx, w, h } = fitCanvas($('k-radar'), 240);
+    ctx.clearRect(0, 0, w, h);
+    const labels = DIM_META.map(m => m.k);
+    const series = [];
+    if (t) series.push({ vals: labels.map(k => t.d[k]), fill: 'rgba(30,156,215,.12)', stroke: 'rgba(30,156,215,.55)', width: 1.5 });
+    series.push({ vals: labels.map(k => d[k]), fill: 'rgba(15,111,180,.16)', stroke: BLUE, width: 2.5, dots: true });
+    drawRadar(ctx, w / 2, h / 2 + 4, Math.min(w, h) / 2 - 30, labels, series);
+  }
+
+  /* ---------- Landkarte ---------- */
+  let maxBei = 0.001;
+  function initKarte() {
+    const seg = $('seg-szen');
+    clearNode(seg);
+    LIB.SZEN.forEach(s => {
+      const b = el('button', s.key === state.erleben.szen ? 'on' : '', s.key);
+      b.addEventListener('click', () => { state.erleben.szen = s.key; paintKarte(); });
+      seg.appendChild(b);
+    });
+    const ff = $('k-famfilter');
+    clearNode(ff);
+    const all = el('option', '', 'Alle Funktionsfamilien'); all.value = '';
+    ff.appendChild(all);
+    LIB.FAM.forEach(f => { const o = el('option', '', f); o.value = f; ff.appendChild(o); });
+    ff.addEventListener('change', () => { state.erleben.fam = ff.value; paintKarte(); });
+    $('drawer-bg').addEventListener('click', closeDrawer);
+  }
+  function openDrawer(task) {
+    const a = assess(task.d);
+    const body = $('drawer-body');
+    clearNode(body);
+    body.appendChild(el('h2', '', task.name));
+    body.appendChild(el('div', 'lead', task.fam + ', Zeitanteil in der Familie: ' + task.share + ' Prozent, Skilling-Schwerpunkt: ' + task.skill + ' (Stufe ' + task.stufe + ')'));
+    const chips = el('div', 'row', '');
+    chips.style.margin = '12px 0';
+    chips.appendChild(el('span', 'chip ' + WKCLS[a.wirkung], a.wirkung));
+    chips.appendChild(el('span', 'chip ' + STCLS[a.status], a.status));
+    chips.appendChild(el('span', 'chip chip-dim', a.horizont));
+    chips.appendChild(el('span', 'chip chip-dim', 'Betroffenheit ' + a.betroffenheit));
+    body.appendChild(chips);
+    const dims = el('div', 'row');
+    DIM_META.concat(HIDDEN_DIMS.map(k => ({ k, label: k === 'RECHT' ? 'Rechtsgrundlage' : 'Integrationsreife' }))).forEach(m => {
+      dims.appendChild(el('span', 'chip chip-dim', m.label + ' ' + task.d[m.k]));
+    });
+    body.appendChild(dims);
+    whyText(a, task.d).forEach(wl => body.appendChild(el('p', 'lead', wl)));
+    $('tile-drawer').classList.add('open');
+    $('drawer-bg').classList.add('open');
+  }
+  function closeDrawer() {
+    $('tile-drawer').classList.remove('open');
+    $('drawer-bg').classList.remove('open');
+  }
+  function paintKarte() {
+    const szen = LIB.SZEN.find(s => s.key === state.erleben.szen);
+    $('seg-szen').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.textContent === szen.key));
+    const kpi = kennzahl(szen.key);
+    countUp($('map-kpi'), kpi, 1, '%', 600);
+    maxBei = Math.max(...LIB.TASKS.map(t => beitrag(t, szen.f)), 0.001);
+    const grid = $('map-grid');
+    clearNode(grid);
+    LIB.TASKS.forEach((t, i) => {
+      if (state.erleben.fam && t.fam !== state.erleben.fam) return;
+      const a = assess(t.d);
+      const b = beitrag(t, szen.f);
+      const tile = el('button', 'tile');
+      tile.style.animationDelay = (Math.min(i, 30) * 14) + 'ms';
+      tile.appendChild(el('div', 'nm', t.name));
+      tile.appendChild(el('div', 'fm', t.fam));
+      const bar = el('div', 'bar');
+      const fill = el('i');
+      bar.appendChild(fill);
+      tile.appendChild(bar);
+      const dot = el('span', 'st-dot');
+      dot.style.background = STDOT[a.status];
+      dot.title = a.status;
+      tile.appendChild(dot);
+      tile.addEventListener('click', () => openDrawer(t));
+      grid.appendChild(tile);
+      requestAnimationFrame(() => { fill.style.width = Math.round(b / maxBei * 100) + '%'; });
+    });
+  }
+  function init() {
+    initTaskSelect();
+    buildSliders();
+    initKarte();
+    state.erleben.taskIdx = findTask(KOMP_NAMES[0]);
+    state.erleben.d = Object.assign({}, LIB.TASKS[state.erleben.taskIdx].d);
+    $('k-task').value = String(state.erleben.taskIdx);
+    syncSliders();
+  }
+  function open(tab) {
+    show('erleben');
+    setTab(tab || 'kompass');
+  }
+  function setTab(tab) {
+    state.erleben.tab = tab;
+    $('tab-kompass').classList.toggle('on', tab === 'kompass');
+    $('tab-karte').classList.toggle('on', tab === 'karte');
+    $('panel-kompass').classList.toggle('hide', tab !== 'kompass');
+    $('panel-karte').classList.toggle('hide', tab !== 'karte');
+    if (tab === 'kompass') paintKompass(); else paintKarte();
+  }
+  return { init, open, setTab, paintKompass, closeDrawer };
+})();
+
+/* ============================================================
+   ABSCHNITT 10: HOST
+   Der Host ist die einzige Schreibinstanz fuer meta, playlist,
+   deal und scores. Teilnehmende schreiben nur players und live.
+   ============================================================ */
+const MOD_META = {
+  puls:  { short: 'PULS',      title: 'Stimmungsbild',        desc: 'Eine Meinungsfrage ohne richtig oder falsch. Die Balken wachsen live.' },
+  cloud: { short: 'WORTWOLKE', title: 'Wortwolke',            desc: 'Ein bis drei Begriffe pro Person. Häufige Begriffe werden grösser.' },
+  komp:  { short: 'KOMPASS',   title: 'Kompass gemeinsam',    desc: 'Alle bewerten dieselbe Aufgabe auf fünf Dimensionen. Der Median trifft die Bibliothek.' },
+  quiz:  { short: 'CHALLENGE', title: 'Wissens-Challenge',    desc: 'Sechs Fragen mit Countdown, Punkten und fachlicher Auflösung.' },
+  vote:  { short: 'VOTING',    title: 'Betroffenheits-Voting', desc: 'Betroffenheit und Zeithorizont einer Aufgabe, live als Heat-Grid.' }
+};
+function modLabel(item) {
+  if (item.type === 'puls') return PULS[item.ref].q;
+  if (item.type === 'cloud') return CLOUD[item.ref].q;
+  if (item.type === 'komp') return LIB.TASKS[findTask(KOMP_NAMES[item.ref])].name;
+  if (item.type === 'quiz') return 'Runde: ' + QUIZ_ROUNDS[item.ref];
+  if (item.type === 'vote') return LIB.TASKS[findTask(VOTE_NAMES[item.ref])].name;
+  return '';
+}
+function defaultPlaylist() {
+  return [
+    { type: 'puls', ref: 0 },
+    { type: 'cloud', ref: 0 },
+    { type: 'komp', ref: 1 },
+    { type: 'quiz', ref: 0 },
+    { type: 'vote', ref: 3 }
+  ];
+}
+function quizQuestions(roundIdx) {
+  return QUIZ.map((q, i) => ({ q, i })).filter(x => x.q.r === roundIdx);
+}
+function makeCode() {
+  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let c = '';
+  for (let i = 0; i < 5; i++) c += A[Math.floor(Math.random() * A.length)];
+  return c;
+}
+
+const Host = (() => {
+  let unsub = null, unsubConn = null, timerRaf = 0, revealGuard = '';
+  let botFired = {}, botsOn = false;
+
+  /* ---------- Playlist bauen ---------- */
+  function openBuild() {
+    state.playlist = defaultPlaylist();
+    paintBuild();
+    show('build');
+  }
+  function paintBuild() {
+    const list = $('pl-list');
+    clearNode(list);
+    state.playlist.forEach((item, i) => {
+      const row = el('div', 'pl-item');
+      row.appendChild(el('div', 'ic', String(i + 1)));
+      const t = el('div', 't');
+      t.appendChild(el('b', '', MOD_META[item.type].title));
+      t.appendChild(el('span', '', modLabel(item)));
+      row.appendChild(t);
+      const up = el('button', 'mv', '↑'); up.title = 'nach oben';
+      up.addEventListener('click', () => { if (i > 0) { const a = state.playlist; [a[i - 1], a[i]] = [a[i], a[i - 1]]; paintBuild(); } });
+      const dn = el('button', 'mv', '↓'); dn.title = 'nach unten';
+      dn.addEventListener('click', () => { const a = state.playlist; if (i < a.length - 1) { [a[i + 1], a[i]] = [a[i], a[i + 1]]; paintBuild(); } });
+      const rm = el('button', 'mv', '✕'); rm.title = 'entfernen';
+      rm.addEventListener('click', () => { state.playlist.splice(i, 1); paintBuild(); });
+      row.appendChild(up); row.appendChild(dn); row.appendChild(rm);
+      list.appendChild(row);
+    });
+    if (!state.playlist.length) list.appendChild(el('div', 'notice', 'Die Playlist ist leer. Bitte mindestens ein Modul aus der Bibliothek hinzufügen.'));
+    const lib = $('lib-list');
+    clearNode(lib);
+    const variants = {
+      puls: PULS.map((p, i) => ({ ref: i, label: p.q })),
+      cloud: CLOUD.map((p, i) => ({ ref: i, label: p.q })),
+      komp: KOMP_NAMES.map((n, i) => ({ ref: i, label: LIB.TASKS[findTask(n)].name })),
+      quiz: QUIZ_ROUNDS.map((r, i) => ({ ref: i, label: 'Runde: ' + r })),
+      vote: VOTE_NAMES.map((n, i) => ({ ref: i, label: LIB.TASKS[findTask(n)].name }))
+    };
+    Object.keys(MOD_META).forEach(type => {
+      const wrap = el('div');
+      const btn = el('button', 'libbtn');
+      btn.appendChild(el('b', '', MOD_META[type].title));
+      btn.appendChild(el('span', '', ' ' + MOD_META[type].desc));
+      const sub = el('div', 'stack hide');
+      sub.style.margin = '8px 0 4px 12px';
+      variants[type].forEach(v => {
+        const vb = el('button', 'libbtn', v.label);
+        vb.style.borderStyle = 'solid';
+        vb.addEventListener('click', () => {
+          state.playlist.push({ type, ref: v.ref });
+          toast('Hinzugefügt: ' + MOD_META[type].title);
+          paintBuild();
+        });
+        sub.appendChild(vb);
+      });
+      btn.addEventListener('click', () => sub.classList.toggle('hide'));
+      wrap.appendChild(btn); wrap.appendChild(sub);
+      lib.appendChild(wrap);
+    });
+  }
+
+  /* ---------- Session erstellen ---------- */
+  async function createSession() {
+    if (!state.playlist.length) { toast('Bitte zuerst Module wählen.', true); return; }
+    const btn = $('btn-create');
+    setBusy(btn, true);
+    try {
+      if (!state.net) state.net = createNet(state.demo ? 'local' : 'fb');
+      let code = makeCode(), tries = 0;
+      while (await withTimeout(state.net.codeExists(code), 'Code prüfen')) {
+        code = makeCode();
+        if (++tries > 4) throw new Error('Kein freier Session-Code gefunden. Bitte erneut versuchen.');
+      }
+      state.code = code;
+      state.role = 'host';
+      state.hostLog = {};
+      botFired = {}; botsOn = false;
+      const data = {
+        meta: { v: 1, ver: VERSION, created: Date.now(), phase: 'lobby', mIdx: 0, mstate: 'intro', qIdx: 0, qStart: 0, reveal: null, points: true },
+        playlist: state.playlist,
+        deal: {}, players: {}, live: {}, scores: {}
+      };
+      await withTimeout(state.net.createSession(code, data), 'Session anlegen');
+      watchAsHost();
+      show('lobby');
+      paintLobbyStatics();
+    } catch (e) {
+      toast(e.message, true);
+    } finally {
+      setBusy(btn, false);
+    }
+  }
+  function paintLobbyStatics() {
+    $('lob-code').textContent = state.code;
+    const link = location.origin + location.pathname + '?join=' + state.code;
+    $('lob-link').textContent = link;
+    const qb = $('qr-box');
+    clearNode(qb);
+    try {
+      new QRCode(qb, { text: link, width: 196, height: 196, colorDark: '#0B5A93', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M });
+    } catch (e) {
+      qb.appendChild(el('div', 'notice', 'QR-Code konnte nicht erzeugt werden. Bitte den Link verwenden.'));
+    }
+    $('btn-copy').onclick = () => {
+      navigator.clipboard.writeText(link).then(() => toast('Link kopiert.'), () => toast('Kopieren nicht möglich, bitte Link markieren.', true));
+    };
+  }
+  function watchAsHost() {
+    if (unsub) unsub();
+    if (unsubConn) unsubConn();
+    unsubConn = state.net.connWatch(setConn);
+    unsub = state.net.watch(state.code, s => {
+      const prev = state.session;
+      state.session = s;
+      if (!s) return;
+      trackAnswerTimes(prev, s);
+      if (botsOn) Bots.tick(s);
+      renderHost(s, prev);
+    });
+  }
+
+  /* Antwortzeiten fuer Quiz lokal stempeln (Host-Uhr, keine Client-Uhren) */
+  function trackAnswerTimes(prev, s) {
+    const m = s.meta;
+    if (!m || m.phase !== 'module') return;
+    const item = s.playlist[m.mIdx];
+    if (!item || item.type !== 'quiz') return;
+    const key = m.mIdx + ':' + m.qIdx;
+    const now = performance.now();
+    const cur = (s.live && s.live[m.mIdx] && s.live[m.mIdx][m.qIdx]) || {};
+    const log = state.hostLog[key] = state.hostLog[key] || {};
+    Object.keys(cur).forEach(pid => { if (!log[pid]) log[pid] = now; });
+  }
+
+  /* ---------- Ablaufsteuerung ---------- */
+  function playerCount(s) { return Object.keys(s.players || {}).length; }
+  function answeredCount(s) {
+    const m = s.meta, item = s.playlist[m.mIdx];
+    if (!item) return 0;
+    const l = (s.live && s.live[m.mIdx]) || {};
+    if (item.type === 'quiz') return Object.keys(l[m.qIdx] || {}).length;
+    return Object.keys(l).length;
+  }
+  async function hostUpdate(patch, label) {
+    try {
+      await withTimeout(state.net.update(state.code, patch), label || 'Aktualisieren');
+    } catch (e) { toast(e.message, true); }
+  }
+  function startWorkshop() {
+    if (playerCount(state.session) === 0) { toast('Noch keine Teilnehmenden. Für einen Testlauf die Bot-Taste nutzen.', true); return; }
+    gotoModule(0);
+  }
+  function gotoModule(idx) {
+    revealGuard = '';
+    if (idx >= state.session.playlist.length) {
+      hostUpdate({ 'meta/phase': 'end', 'meta/mstate': 'intro' }, 'Abschluss');
+      return;
+    }
+    hostUpdate({ 'meta/phase': 'module', 'meta/mIdx': idx, 'meta/mstate': 'intro', 'meta/qIdx': 0, 'meta/qStart': 0, 'meta/reveal': null }, 'Modulwechsel');
+  }
+  async function mainAction() {
+    const s = state.session, m = s.meta, item = s.playlist[m.mIdx];
+    const btn = $('btn-hm-main');
+    setBusy(btn, true);
+    try {
+      if (m.mstate === 'intro') {
+        if (item.type === 'quiz') {
+          let deal = (s.deal || {})[m.mIdx];
+          if (!deal) {
+            const qs = quizQuestions(item.ref);
+            const order = shuffled(qs.length);
+            const perms = {};
+            order.forEach(li => { perms[li] = shuffled(qs[li].q.opts.length); });
+            deal = { order, perms };
+            await withTimeout(state.net.update(state.code, { ['deal/' + m.mIdx]: deal }), 'Fragen mischen');
+          }
+          await startQuizQuestion(0);
+        } else {
+          await hostUpdate({ 'meta/mstate': 'run' }, 'Modul starten');
+        }
+      } else if (m.mstate === 'run') {
+        if (item.type === 'quiz') await revealQuiz();
+        else await hostUpdate({ 'meta/mstate': 'result' }, 'Abschliessen');
+      } else {
+        if (item.type === 'quiz') {
+          const qs = quizQuestions(item.ref);
+          if (m.qIdx + 1 < qs.length) await startQuizQuestion(m.qIdx + 1);
+          else gotoModule(m.mIdx + 1);
+        } else {
+          gotoModule(m.mIdx + 1);
+        }
+      }
+    } catch (e) { toast(e.message, true); }
+    finally { setBusy(btn, false); }
+  }
+  async function startQuizQuestion(qIdx) {
+    revealGuard = '';
+    state.hostLog[state.session.meta.mIdx + ':' + qIdx] = {};
+    await hostUpdate({ 'meta/mstate': 'run', 'meta/qIdx': qIdx, 'meta/qStart': Date.now(), 'meta/reveal': null }, 'Frage starten');
+    startTimerLoop();
+  }
+  function startTimerLoop() {
+    cancelAnimationFrame(timerRaf);
+    const tick = () => {
+      const s = state.session;
+      if (!s || s.meta.phase !== 'module' || s.meta.mstate !== 'run') return;
+      const item = s.playlist[s.meta.mIdx];
+      if (item.type !== 'quiz') return;
+      const q = quizQuestions(item.ref)[dealOrder(s)[s.meta.qIdx]].q;
+      const remain = Math.max(0, q.time - (Date.now() - s.meta.qStart) / 1000);
+      paintTimer(remain, q.time);
+      if (remain <= 0) { autoReveal('Zeit abgelaufen'); return; }
+      if (playerCount(s) > 0 && answeredCount(s) >= playerCount(s)) { autoReveal('alle geantwortet'); return; }
+      timerRaf = requestAnimationFrame(tick);
+    };
+    timerRaf = requestAnimationFrame(tick);
+  }
+  function autoReveal(reason) {
+    const s = state.session;
+    const key = s.meta.mIdx + ':' + s.meta.qIdx;
+    if (revealGuard === key) return;
+    revealGuard = key;
+    revealQuiz();
+  }
+  function dealOrder(s) { return ((s.deal || {})[s.meta.mIdx] || {}).order || []; }
+  async function revealQuiz() {
+    const s = state.session, m = s.meta, item = s.playlist[m.mIdx];
+    const qs = quizQuestions(item.ref);
+    const localIdx = dealOrder(s)[m.qIdx];
+    const q = qs[localIdx].q;
+    const perm = (s.deal[m.mIdx].perms || {})[localIdx];
+    const correctDisplayed = perm.indexOf(q.a);
+    const answers = ((s.live || {})[m.mIdx] || {})[m.qIdx] || {};
+    const log = state.hostLog[m.mIdx + ':' + m.qIdx] || {};
+    const qStartLocalGuess = Math.min(...Object.values(log), performance.now());
+    const patch = { 'meta/mstate': 'result', 'meta/reveal': { correct: correctDisplayed, why: q.why } };
+    const scores = Object.assign({}, s.scores || {});
+    Object.entries(s.players || {}).forEach(([pid]) => {
+      const prevScore = scores[pid] || { pts: 0, streak: 0 };
+      const aIdx = answers[pid];
+      let gained = 0, streak = 0;
+      if (aIdx === correctDisplayed) {
+        const dt = Math.max(0, (log[pid] || performance.now()) - qStartLocalGuess);
+        const speed = Math.round(500 + 500 * Math.max(0, 1 - dt / (q.time * 1000)));
+        streak = (prevScore.streak || 0) + 1;
+        const bonus = streak >= 2 ? Math.min(500, 100 * (streak - 1)) : 0;
+        gained = speed + bonus;
+      }
+      scores[pid] = { pts: (prevScore.pts || 0) + gained, streak, last: gained, ok: aIdx === correctDisplayed };
+      patch['scores/' + pid] = scores[pid];
+    });
+    await hostUpdate(patch, 'Aufdecken');
+  }
+
+  /* ---------- Rendering Host ---------- */
+  function paintTimer(remain, total) {
+    const wrapEl = $('hm-timer');
+    wrapEl.classList.remove('hide');
+    $('hm-timer-num').textContent = Math.ceil(remain);
+    const C = 194.8;
+    $('hm-timer-arc').style.strokeDashoffset = String(C * (1 - remain / total));
+    $('hm-timer-arc').style.stroke = remain <= 5 ? '#C0392B' : BLUE;
+  }
+  function renderHost(s, prev) {
+    const m = s.meta;
+    if (m.phase === 'lobby') {
+      if (state.screen !== 'lobby') { show('lobby'); paintLobbyStatics(); }
+      const names = Object.values(s.players || {}).map(p => p.name);
+      $('lob-count').textContent = String(names.length);
+      const box = $('lob-players');
+      clearNode(box);
+      names.slice(0, 60).forEach(n => box.appendChild(el('span', 'pbadge', n)));
+      return;
+    }
+    if (m.phase === 'end') { renderEnd(s); return; }
+    if (state.screen !== 'hostmod') show('hostmod');
+    const item = s.playlist[m.mIdx];
+    const meta = MOD_META[item.type];
+    $('hm-prog').textContent = 'Modul ' + (m.mIdx + 1) + ' von ' + s.playlist.length + ': ' + meta.title;
+    $('hm-type').textContent = meta.short;
+    $('hm-answered').textContent = answeredCount(s) + ' / ' + playerCount(s);
+    const mainBtn = $('btn-hm-main').querySelector('.lbl');
+    $('hm-timer').classList.toggle('hide', !(item.type === 'quiz' && m.mstate === 'run'));
+    if (m.mstate === 'intro') mainBtn.textContent = item.type === 'quiz' ? 'Erste Frage' : 'Starten';
+    else if (m.mstate === 'run') mainBtn.textContent = 'Aufdecken';
+    else mainBtn.textContent = (item.type === 'quiz' && m.qIdx + 1 < quizQuestions(item.ref).length) ? 'Nächste Frage' : 'Weiter';
+    const body = $('hm-body');
+    Mods[item.type].host(s, item, body, prev);
+  }
+  function renderEnd(s) {
+    if (state.screen !== 'hostend') show('hostend');
+    const pod = $('end-podium');
+    clearNode(pod);
+    const ranked = Object.entries(s.scores || {})
+      .map(([pid, sc]) => ({ name: (s.players[pid] || {}).name || '?', pts: sc.pts || 0 }))
+      .sort((a, b) => b.pts - a.pts).slice(0, 3);
+    if (ranked.length && ranked[0].pts > 0) {
+      const order = [1, 0, 2];
+      const heights = [150, 200, 120];
+      order.forEach((ri, col) => {
+        const r = ranked[ri];
+        if (!r) return;
+        const p = el('div', 'pod');
+        const box = el('div', 'box');
+        box.style.height = heights[col] + 'px';
+        box.style.animationDelay = (col * 0.25) + 's';
+        box.appendChild(el('div', 'nm', r.name));
+        box.appendChild(el('div', 'pt', String(r.pts)));
+        p.appendChild(box);
+        p.appendChild(el('div', 'rk', String(ri + 1) + '.'));
+        pod.appendChild(p);
+      });
+    } else {
+      pod.appendChild(el('div', 'lead', 'Diese Session lief ohne Punktewertung.'));
+    }
+  }
+  async function deleteSession() {
+    const btn = $('btn-del');
+    setBusy(btn, true);
+    try {
+      await withTimeout(state.net.deleteSession(state.code), 'Session löschen');
+      toast('Session gelöscht.');
+      leave();
+    } catch (e) { toast(e.message, true); }
+    finally { setBusy(btn, false); }
+  }
+  function leave() {
+    if (unsub) unsub(); if (unsubConn) unsubConn();
+    unsub = unsubConn = null;
+    cancelAnimationFrame(timerRaf);
+    Bots.stop();
+    state.session = null; state.role = null; state.code = '';
+    document.body.classList.remove('demo');
+    state.demo = false; state.net = null;
+    show('home');
+  }
+  function exportCurrent() {
+    const s = state.session;
+    if (!s || s.meta.phase !== 'module') { toast('Kein Modulergebnis aktiv.', true); return; }
+    const item = s.playlist[s.meta.mIdx];
+    Mods[item.type].exportPng(s, item);
+  }
+  function startBots(n) {
+    if (!state.session) return Promise.resolve();
+    n = n || 15;
+    botsOn = true;
+    return Bots.spawn(state.net, state.code, n).then(() => {
+      toast(n + ' Bots sind beigetreten und spielen mit.');
+      Bots.tick(state.session);
+    }).catch(e => toast(e.message, true));
+  }
+  return { openBuild, paintBuild, createSession, startWorkshop, mainAction, deleteSession, leave, exportCurrent, startBots, get botsOn() { return botsOn; } };
+})();
+
+/* ============================================================
+   ABSCHNITT 11: MODULE (Host-Darstellung und Export)
+   ============================================================ */
+function introBody(body, item) {
+  clearNode(body);
+  const meta = MOD_META[item.type];
+  $('hm-q').textContent = meta.title;
+  const card = el('div', 'card plain');
+  card.appendChild(el('p', 'lead', meta.desc));
+  card.appendChild(el('p', 'lead', 'Thema: ' + modLabel(item)));
+  card.appendChild(el('p', 'lead', 'Die Teilnehmenden sehen die Eingabe auf ihrem Gerät, sobald Sie starten.'));
+  body.appendChild(card);
+}
+function barRows(body, labels, counts, correctIdx) {
+  const wrap = el('div', 'hbars');
+  const max = Math.max(1, ...counts);
+  labels.forEach((lab, i) => {
+    const row = el('div', 'hbar' + (correctIdx === i ? ' correct' : ''));
+    row.appendChild(el('div', 'lab', lab));
+    const tr = el('div', 'tr');
+    const fl = el('div', 'fl');
+    tr.appendChild(fl);
+    row.appendChild(tr);
+    row.appendChild(el('div', 'ct', String(counts[i])));
+    wrap.appendChild(row);
+    requestAnimationFrame(() => { fl.style.width = Math.round(counts[i] / max * 100) + '%'; });
+  });
+  body.appendChild(wrap);
+}
+const Mods = {};
+
+Mods.puls = {
+  counts(s, item) {
+    const l = (s.live || {})[s.meta.mIdx] || {};
+    const c = PULS[item.ref].opts.map(() => 0);
+    Object.values(l).forEach(v => { if (Number.isInteger(v) && c[v] !== undefined) c[v]++; });
+    return c;
+  },
+  host(s, item, body) {
+    if (s.meta.mstate === 'intro') { introBody(body, item); return; }
+    $('hm-q').textContent = PULS[item.ref].q;
+    clearNode(body);
+    barRows(body, PULS[item.ref].opts, this.counts(s, item));
+  },
+  exportPng(s, item) {
+    const c = this.counts(s, item);
+    exportPNG('Stimmungsbild', PULS[item.ref].q, (ctx, w, h) => {
+      drawBarsPNG(ctx, w, h, PULS[item.ref].opts.map((o, i) => ({ label: o, v: c[i] })));
+    });
+  }
+};
+
+Mods.cloud = {
+  words(s) {
+    const l = (s.live || {})[s.meta.mIdx] || {};
+    const agg = {};
+    Object.values(l).forEach(str => {
+      String(str).split('|').map(normWord).filter(Boolean).forEach(wd => {
+        const key = wd.toLowerCase();
+        agg[key] = agg[key] || { t: wd, c: 0 };
+        agg[key].c++;
+      });
+    });
+    const out = {};
+    Object.values(agg).forEach(x => out[x.t] = x.c);
+    return out;
+  },
+  host(s, item, body) {
+    if (s.meta.mstate === 'intro') { introBody(body, item); return; }
+    $('hm-q').textContent = CLOUD[item.ref].q;
+    let cv = body.querySelector('canvas');
+    if (!cv) {
+      clearNode(body);
+      cv = el('canvas', 'mod-canvas');
+      body.appendChild(cv);
+    }
+    const { ctx, w, h } = fitCanvas(cv, 380);
+    drawCloud(ctx, w, h, this.words(s));
+  },
+  exportPng(s, item) {
+    const words = this.words(s);
+    exportPNG('Wortwolke', CLOUD[item.ref].q, (ctx, w, h) => drawCloud(ctx, w, h, words));
+  }
+};
+
+Mods.komp = {
+  data(s, item) {
+    const task = LIB.TASKS[findTask(KOMP_NAMES[item.ref])];
+    const l = (s.live || {})[s.meta.mIdx] || {};
+    const votes = Object.values(l).filter(v => Array.isArray(v) && v.length === KOMP_DIMS.length);
+    const med = KOMP_DIMS.map((k, i) => votes.length ? median(votes.map(v => clamp(v[i], 1, 5))) : task.d[k]);
+    const spans = KOMP_DIMS.map((k, i) => {
+      if (!votes.length) return null;
+      const vals = votes.map(v => clamp(v[i], 1, 5));
+      return [Math.min(...vals), Math.max(...vals)];
+    });
+    const dm = Object.assign({}, task.d);
+    KOMP_DIMS.forEach((k, i) => dm[k] = med[i]);
+    return { task, votes, med, spans, groupAssess: assess(dm), libAssess: assess(task.d) };
+  },
+  host(s, item, body) {
+    if (s.meta.mstate === 'intro') { introBody(body, item); return; }
+    const d = this.data(s, item);
+    $('hm-q').textContent = d.task.name;
+    clearNode(body);
+    const grid = el('div', 'grid-2');
+    const left = el('div', 'card plain');
+    const cv = el('canvas', 'mod-canvas');
+    left.appendChild(cv);
+    grid.appendChild(left);
+    const right = el('div', 'card plain');
+    right.appendChild(el('h3', '', 'Gruppen-Median gegen Bibliothek (' + d.votes.length + ' Bewertungen)'));
+    const mkRow = (title, a) => {
+      const r = el('div', 'row');
+      r.style.margin = '8px 0';
+      r.appendChild(el('span', 'chip chip-dim', title));
+      r.appendChild(el('span', 'chip ' + WKCLS[a.wirkung], a.wirkung));
+      r.appendChild(el('span', 'chip ' + STCLS[a.status], a.status));
+      r.appendChild(el('span', 'chip chip-dim', a.horizont));
+      return r;
+    };
+    right.appendChild(mkRow('Gruppe', d.groupAssess));
+    right.appendChild(mkRow('Bibliothek', d.libAssess));
+    const dissent = el('div');
+    KOMP_DIMS.forEach((k, i) => {
+      const meta = DIM_META.find(x => x.k === k);
+      const span = d.spans[i];
+      const txt = span ? (meta.label + ': ' + span[0] + ' bis ' + span[1]) : meta.label;
+      const c = el('span', 'chip chip-dim', txt);
+      if (span && span[1] - span[0] >= 3) { c.classList.add('st-plaus'); c.title = 'Grosse Spannweite, Dissens sichtbar machen.'; }
+      c.style.margin = '3px 6px 3px 0';
+      dissent.appendChild(c);
+    });
+    right.appendChild(el('h3', '', 'Spannweite je Dimension'));
+    right.appendChild(dissent);
+    right.appendChild(el('p', 'lead', 'Grosse Spannweiten sind kein Fehler, sondern Gesprächsstoff: Dissens wird sichtbar gemacht, nicht weggemittelt.'));
+    grid.appendChild(right);
+    body.appendChild(grid);
+    const { ctx, w, h } = fitCanvas(cv, 340);
+    ctx.clearRect(0, 0, w, h);
+    drawRadar(ctx, w / 2, h / 2 + 6, Math.min(w, h) / 2 - 34, KOMP_DIMS,
+      [{ vals: KOMP_DIMS.map(k => d.task.d[k]), fill: 'rgba(30,156,215,.10)', stroke: 'rgba(30,156,215,.6)', width: 1.5 },
+       { vals: d.med, fill: 'rgba(15,111,180,.18)', stroke: BLUE, width: 3, dots: true }]);
+  },
+  exportPng(s, item) {
+    const d = this.data(s, item);
+    exportPNG('Kompass gemeinsam', d.task.name + ' (' + d.votes.length + ' Bewertungen)', (ctx, w, h) => {
+      drawRadar(ctx, w * 0.28, h / 2, Math.min(w * 0.5, h) / 2 - 20, KOMP_DIMS,
+        [{ vals: KOMP_DIMS.map(k => d.task.d[k]), fill: 'rgba(30,156,215,.10)', stroke: 'rgba(30,156,215,.6)', width: 2 },
+         { vals: d.med, fill: 'rgba(15,111,180,.18)', stroke: BLUE, width: 4, dots: true }]);
+      ctx.fillStyle = INK; ctx.font = '700 26px "Segoe UI",Roboto,sans-serif';
+      ctx.fillText('Gruppe: ' + d.groupAssess.wirkung + ', ' + d.groupAssess.status, w * 0.55, h * 0.30);
+      ctx.fillText('Bibliothek: ' + d.libAssess.wirkung + ', ' + d.libAssess.status, w * 0.55, h * 0.42);
+      ctx.font = '400 22px "Segoe UI",Roboto,sans-serif';
+      ctx.fillText('Blau: Gruppen-Median. Hellblau: Bibliotheksprofil.', w * 0.55, h * 0.56);
+    });
+  }
+};
+
+Mods.quiz = {
+  q(s, item) {
+    const localIdx = (((s.deal || {})[s.meta.mIdx] || {}).order || [])[s.meta.qIdx];
+    const qs = quizQuestions(item.ref);
+    return { q: qs[localIdx].q, perm: (((s.deal || {})[s.meta.mIdx] || {}).perms || {})[localIdx] || [] };
+  },
+  counts(s, perm) {
+    const l = ((s.live || {})[s.meta.mIdx] || {})[s.meta.qIdx] || {};
+    const c = perm.map(() => 0);
+    Object.values(l).forEach(v => { if (Number.isInteger(v) && c[v] !== undefined) c[v]++; });
+    return c;
+  },
+  host(s, item, body) {
+    if (s.meta.mstate === 'intro') {
+      introBody(body, item);
+      $('hm-q').textContent = 'Runde: ' + QUIZ_ROUNDS[item.ref] + ' (6 Fragen)';
+      return;
+    }
+    const { q, perm } = this.q(s, item);
+    $('hm-q').textContent = 'Frage ' + (s.meta.qIdx + 1) + ' von 6: ' + q.q;
+    clearNode(body);
+    const displayed = perm.map(oi => q.opts[oi]);
+    if (s.meta.mstate === 'run') {
+      const wrap = el('div', 'hbars');
+      displayed.forEach((lab, i) => {
+        const row = el('div', 'hbar');
+        row.appendChild(el('div', 'lab', String.fromCharCode(65 + i) + '  ' + lab));
+        const tr = el('div', 'tr'); tr.appendChild(el('div', 'fl'));
+        row.appendChild(tr);
+        row.appendChild(el('div', 'ct', ''));
+        wrap.appendChild(row);
+      });
+      body.appendChild(wrap);
+    } else {
+      barRows(body, displayed.map((l2, i) => String.fromCharCode(65 + i) + '  ' + l2), this.counts(s, perm), (s.meta.reveal || {}).correct);
+      const why = el('div', 'card plain');
+      why.style.marginTop = '14px';
+      why.appendChild(el('b', '', 'Auflösung: '));
+      why.appendChild(el('span', 'lead', (s.meta.reveal || {}).why || q.why));
+      body.appendChild(why);
+      const ranked = Object.entries(s.scores || {})
+        .map(([pid, sc]) => ({ name: (s.players[pid] || {}).name || '?', pts: sc.pts || 0 }))
+        .sort((a, b) => b.pts - a.pts).slice(0, 3);
+      if (ranked.length) {
+        const zs = el('div', 'row');
+        zs.style.marginTop = '12px';
+        zs.appendChild(el('span', 'chip chip-dim', 'Zwischenstand'));
+        ranked.forEach((r, i) => zs.appendChild(el('span', 'pbadge', (i + 1) + '. ' + r.name + ' (' + r.pts + ')')));
+        body.appendChild(zs);
+      }
+    }
+  },
+  exportPng(s, item) {
+    if (s.meta.mstate !== 'result') { toast('Bitte zuerst aufdecken.', true); return; }
+    const { q, perm } = this.q(s, item);
+    const c = this.counts(s, perm);
+    const correct = (s.meta.reveal || {}).correct;
+    exportPNG('Challenge Frage ' + (s.meta.qIdx + 1), q.q, (ctx, w, h) => {
+      drawBarsPNG(ctx, w, h - 80, perm.map((oi, i) => ({ label: String.fromCharCode(65 + i) + '  ' + q.opts[oi], v: c[i], color: i === correct ? '#0E8A5F' : BLUE })));
+      ctx.fillStyle = '#3E5A72'; ctx.font = '400 24px "Segoe UI",Roboto,sans-serif';
+      ctx.fillText('Auflösung: ' + q.why.slice(0, 110), 0, h - 16);
+    });
+  }
+};
+
+Mods.vote = {
+  grid(s) {
+    const l = (s.live || {})[s.meta.mIdx] || {};
+    const g = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    Object.values(l).forEach(v => {
+      if (v && Number.isInteger(v.b) && Number.isInteger(v.h) && g[v.b] && g[v.b][v.h] !== undefined) g[v.b][v.h]++;
+    });
+    return g;
+  },
+  host(s, item, body, prev) {
+    if (s.meta.mstate === 'intro') { introBody(body, item); return; }
+    const task = LIB.TASKS[findTask(VOTE_NAMES[item.ref])];
+    $('hm-q').textContent = task.name;
+    const g = this.grid(s);
+    const pg = prev && prev.meta && prev.meta.mIdx === s.meta.mIdx ? this.grid(prev) : null;
+    clearNode(body);
+    const heat = el('div', 'heat');
+    heat.appendChild(el('div', 'hl', ''));
+    VOTE_AXES.h.vals.forEach(hv => heat.appendChild(el('div', 'hl', hv)));
+    const max = Math.max(1, ...g.flat());
+    VOTE_AXES.b.vals.forEach((bv, bi) => {
+      heat.appendChild(el('div', 'hl', 'Betroffenheit ' + bv));
+      VOTE_AXES.h.vals.forEach((hv, hi) => {
+        const c = el('div', 'hc', String(g[bi][hi]));
+        const t = g[bi][hi] / max;
+        c.style.background = 'rgba(15,111,180,' + (0.06 + t * 0.55) + ')';
+        if (t > 0.55) c.style.color = '#fff';
+        if (pg && g[bi][hi] > pg[bi][hi]) c.classList.add('glow');
+        heat.appendChild(c);
+      });
+    });
+    body.appendChild(heat);
+    body.appendChild(el('p', 'lead', 'Jede Person setzt genau eine Einschätzung. Cluster und Ausreisser sind Gesprächsstoff für die Studie.'));
+  },
+  exportPng(s, item) {
+    const task = LIB.TASKS[findTask(VOTE_NAMES[item.ref])];
+    const g = this.grid(s);
+    exportPNG('Betroffenheits-Voting', task.name, (ctx, w, h) => {
+      const cw = Math.min(300, (w - 260) / 3), ch = Math.min(150, (h - 80) / 3);
+      ctx.font = '700 24px "Segoe UI",Roboto,sans-serif';
+      const max = Math.max(1, ...g.flat());
+      VOTE_AXES.h.vals.forEach((hv, hi) => { ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.fillText(hv, 260 + hi * (cw + 16) + cw / 2, 24); });
+      VOTE_AXES.b.vals.forEach((bv, bi) => {
+        ctx.fillStyle = INK; ctx.textAlign = 'left';
+        ctx.fillText('Betroffenheit ' + bv, 0, 80 + bi * (ch + 16) + ch / 2);
+        VOTE_AXES.h.vals.forEach((hv, hi) => {
+          const x = 260 + hi * (cw + 16), y = 50 + bi * (ch + 16);
+          const t = g[bi][hi] / max;
+          ctx.fillStyle = 'rgba(15,111,180,' + (0.08 + t * 0.7) + ')';
+          ctx.fillRect(x, y, cw, ch);
+          ctx.fillStyle = t > 0.5 ? '#fff' : DEEP;
+          ctx.textAlign = 'center'; ctx.font = '800 40px "Segoe UI",Roboto,sans-serif';
+          ctx.fillText(String(g[bi][hi]), x + cw / 2, y + ch / 2 + 14);
+          ctx.font = '700 24px "Segoe UI",Roboto,sans-serif';
+        });
+        ctx.textAlign = 'left';
+      });
+    });
+  }
+};
+
+/* ============================================================
+   ABSCHNITT 12: BOTS (bespielen die echte Datenpipeline)
+   ============================================================ */
+const Bots = (() => {
+  const WORDPOOL = ['Protokolle', 'Berichte', 'Ablage', 'Recherche', 'Terminplanung', 'Datenerfassung', 'Zusammenfassen', 'Vertrauen', 'Transparenz', 'Verantwortung', 'Neugier', 'Qualität', 'Urteilskraft', 'Prüfen', 'Zusammenarbeit', 'Entlastung', 'Lernen', 'Klarheit'];
+  let bots = [], fired = {}, net = null, code = '';
+  async function spawn(theNet, theCode, n) {
+    net = theNet; code = theCode;
+    bots = [];
+    for (let i = 1; i <= n; i++) {
+      const pid = 'bot_' + String(i).padStart(2, '0') + '_' + Math.random().toString(36).slice(2, 7);
+      const name = 'Bot ' + String(i).padStart(2, '0');
+      bots.push({ pid, name });
+      await withTimeout(net.writePlayer(code, pid, { name, ts: Date.now(), bot: true }), 'Bot beitreten');
+    }
+  }
+  function key(s) {
+    const m = s.meta;
+    const item = s.playlist[m.mIdx];
+    return m.mIdx + ':' + (item && item.type === 'quiz' ? m.qIdx : 'x') + ':' + m.mstate;
+  }
+  function tick(s) {
+    if (!bots.length || !s || s.meta.phase !== 'module' || s.meta.mstate !== 'run') return;
+    const m = s.meta, item = s.playlist[m.mIdx];
+    const k = key(s);
+    fired[k] = fired[k] || {};
+    bots.forEach(b => {
+      if (fired[k][b.pid]) return;
+      fired[k][b.pid] = true;
+      const speedF = (typeof window !== 'undefined' && window.__JRL_FAST_BOTS__) ? 0.02 : 1;
+      const delay = speedF * (350 + Math.random() * (item.type === 'quiz' ? Math.min(6500, ((quizQuestions(item.ref)[((s.deal || {})[m.mIdx].order || [])[m.qIdx]] || { q: { time: 20 } }).q.time * 1000) * 0.75) : 4200));
+      setTimeout(() => { answer(b, s, item, m).catch(() => {}); }, delay);
+    });
+  }
+  async function answer(b, s, item, m) {
+    const cur = state.session;
+    if (!cur || cur.meta.phase !== 'module' || cur.meta.mIdx !== m.mIdx || cur.meta.mstate !== 'run') return;
+    if (item.type === 'puls') {
+      await net.writeLive(code, m.mIdx + '/' + b.pid, Math.floor(Math.random() * PULS[item.ref].opts.length));
+    } else if (item.type === 'cloud') {
+      const n = 1 + Math.floor(Math.random() * 2);
+      const words = Array.from({ length: n }, () => rnd(WORDPOOL)).join('|');
+      await net.writeLive(code, m.mIdx + '/' + b.pid, words);
+    } else if (item.type === 'komp') {
+      const task = LIB.TASKS[findTask(KOMP_NAMES[item.ref])];
+      const vals = KOMP_DIMS.map(k2 => clamp(task.d[k2] + (Math.random() < 0.55 ? 0 : (Math.random() < 0.5 ? -1 : 1)), 1, 5));
+      await net.writeLive(code, m.mIdx + '/' + b.pid, vals);
+    } else if (item.type === 'quiz') {
+      if (cur.meta.qIdx !== m.qIdx) return;
+      const localIdx = ((cur.deal || {})[m.mIdx].order || [])[m.qIdx];
+      const q = quizQuestions(item.ref)[localIdx].q;
+      const perm = (cur.deal[m.mIdx].perms || {})[localIdx] || [];
+      const correctDisplayed = perm.indexOf(q.a);
+      const pick = Math.random() < 0.7 ? correctDisplayed : Math.floor(Math.random() * perm.length);
+      await net.writeLive(code, m.mIdx + '/' + m.qIdx + '/' + b.pid, pick);
+    } else if (item.type === 'vote') {
+      const task = LIB.TASKS[findTask(VOTE_NAMES[item.ref])];
+      const a = assess(task.d);
+      const bBias = a.betroffenheit === 'hoch' ? 2 : (a.betroffenheit === 'mittel' ? 1 : 0);
+      const hBias = a.horizont === 'kurzfristig' ? 0 : (a.horizont === 'langfristig' ? 2 : 1);
+      const jig = () => (Math.random() < 0.6 ? 0 : (Math.random() < 0.5 ? -1 : 1));
+      await net.writeLive(code, m.mIdx + '/' + b.pid, { b: clamp(bBias + jig(), 0, 2), h: clamp(hBias + jig(), 0, 2) });
+    }
+  }
+  function stop() { bots = []; fired = {}; }
+  return { spawn, tick, stop };
+})();
+
+/* ============================================================
+   ABSCHNITT 13: TEILNEHMENDE
+   ============================================================ */
+const Player = (() => {
+  let unsub = null, unsubConn = null;
+  function sentKey(s) {
+    const m = s.meta, item = s.playlist[m.mIdx];
+    return m.mIdx + ':' + (item && item.type === 'quiz' ? m.qIdx : 'x');
+  }
+  async function join(code, name, netMode) {
+    const btn = $('btn-join');
+    setBusy(btn, true);
+    try {
+      code = code.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      name = normWord(name).slice(0, 16);
+      if (code.length !== 5) throw new Error('Der Session-Code hat fünf Zeichen.');
+      if (name.length < 2) throw new Error('Bitte einen Alias mit mindestens zwei Zeichen wählen.');
+      if (!state.net) state.net = createNet(netMode || 'fb');
+      const exists = await withTimeout(state.net.codeExists(code), 'Session suchen');
+      if (!exists) throw new Error('Keine Session mit diesem Code gefunden.');
+      state.code = code;
+      state.role = 'player';
+      state.name = name;
+      state.pid = 'p_' + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6);
+      state.playerSent = {};
+      await withTimeout(state.net.writePlayer(code, state.pid, { name, ts: Date.now() }), 'Beitreten');
+      $('pl-name').textContent = name;
+      $('pl-code').textContent = code;
+      if (unsub) unsub(); if (unsubConn) unsubConn();
+      unsubConn = state.net.connWatch(setConn);
+      unsub = state.net.watch(code, s => { state.session = s; renderPlayer(s); });
+      show('player');
+    } catch (e) {
+      toast(e.message, true);
+    } finally { setBusy(btn, false); }
+  }
+  function waitBlock(title, sub) {
+    const b = el('div');
+    b.appendChild(el('div', 'wait-pulse'));
+    b.appendChild(el('div', 'feedback-big', title));
+    if (sub) { const s = el('p', 'lead', sub); s.style.textAlign = 'center'; b.appendChild(s); }
+    return b;
+  }
+  async function send(sub, val, doneLabel) {
+    const s = state.session;
+    const k = sentKey(s);
+    try {
+      await withTimeout(state.net.writeLive(state.code, sub, val), 'Antwort senden');
+      state.playerSent[k] = val;
+      renderPlayer(state.session);
+      if (doneLabel) toast(doneLabel);
+    } catch (e) { toast(e.message, true); }
+  }
+  function renderPlayer(s) {
+    const body = $('pl-body');
+    if (!s) {
+      clearNode(body);
+      body.appendChild(el('div', 'notice err', 'Die Session wurde beendet oder gelöscht. Danke fürs Mitmachen.'));
+      return;
+    }
+    const m = s.meta;
+    clearNode(body);
+    if (m.phase === 'lobby') {
+      body.appendChild(waitBlock('Sie sind dabei.', 'Der Workshop startet gleich, Blick zur Leinwand.'));
+      return;
+    }
+    if (m.phase === 'end') {
+      const sc = (s.scores || {})[state.pid];
+      body.appendChild(waitBlock('Danke fürs Mitmachen.', sc && sc.pts ? 'Ihr Ergebnis: ' + sc.pts + ' Punkte.' : 'Ihre Einschätzungen sind in die Gruppenbilder eingeflossen.'));
+      return;
+    }
+    const item = s.playlist[m.mIdx];
+    const meta = MOD_META[item.type];
+    const k = sentKey(s);
+    if (m.mstate === 'intro') {
+      body.appendChild(waitBlock(meta.title, 'Gleich geht es los.'));
+      return;
+    }
+    if (m.mstate === 'result') {
+      if (item.type === 'quiz') {
+        const my = state.playerSent[k];
+        const correct = (m.reveal || {}).correct;
+        const sc = (s.scores || {})[state.pid] || {};
+        if (my === undefined) body.appendChild(el('div', 'feedback-big', 'Keine Antwort abgegeben.'));
+        else if (my === correct) {
+          body.appendChild(el('div', 'feedback-big', 'Richtig!'));
+          body.appendChild(el('div', 'pts-pop', '+' + (sc.last || 0)));
+        } else {
+          body.appendChild(el('div', 'feedback-big', 'Leider nein.'));
+        }
+        const why = el('p', 'lead', (m.reveal || {}).why || '');
+        why.style.textAlign = 'center';
+        body.appendChild(why);
+        if (sc.pts !== undefined) {
+          const tot = el('p', 'lead', 'Total: ' + sc.pts + ' Punkte');
+          tot.style.textAlign = 'center';
+          body.appendChild(tot);
+        }
+      } else {
+        body.appendChild(waitBlock('Danke.', 'Das Gruppenbild ist auf der Leinwand.'));
+      }
+      return;
+    }
+    /* mstate === run */
+    if (state.playerSent[k] !== undefined) {
+      body.appendChild(waitBlock('Antwort gesendet.', 'Warten auf die anderen.'));
+      return;
+    }
+    if (item.type === 'puls') {
+      const p = PULS[item.ref];
+      body.appendChild(el('div', 'pl-q', p.q));
+      p.opts.forEach((o, i) => {
+        const b = el('button', 'ansbtn');
+        b.appendChild(el('span', 'dot', String.fromCharCode(65 + i)));
+        b.appendChild(el('span', '', o));
+        b.addEventListener('click', () => send(m.mIdx + '/' + state.pid, i));
+        body.appendChild(b);
+      });
+    } else if (item.type === 'cloud') {
+      const c = CLOUD[item.ref];
+      body.appendChild(el('div', 'pl-q', c.q));
+      body.appendChild(el('p', 'lead', c.hint));
+      const inputs = [];
+      for (let i = 0; i < 3; i++) {
+        const inp = el('input', 'txt');
+        inp.maxLength = 24;
+        inp.placeholder = i === 0 ? 'Begriff 1' : 'Begriff ' + (i + 1) + ' (optional)';
+        inputs.push(inp);
+        body.appendChild(inp);
+      }
+      const b = el('button', 'btn btn-primary');
+      b.appendChild(el('span', 'lbl', 'Senden'));
+      b.addEventListener('click', () => {
+        const words = inputs.map(x => normWord(x.value)).filter(Boolean);
+        if (!words.length) { toast('Bitte mindestens einen Begriff eingeben.', true); return; }
+        send(m.mIdx + '/' + state.pid, words.join('|'));
+      });
+      body.appendChild(b);
+    } else if (item.type === 'komp') {
+      const task = LIB.TASKS[findTask(KOMP_NAMES[item.ref])];
+      body.appendChild(el('div', 'pl-q', task.name));
+      body.appendChild(el('p', 'lead', 'Ihre Einschätzung auf fünf Dimensionen, 1 bedeutet tief, 5 bedeutet hoch.'));
+      const vals = KOMP_DIMS.map(k2 => 3);
+      KOMP_DIMS.forEach((k2, i) => {
+        const meta2 = DIM_META.find(x => x.k === k2);
+        const row = el('div', 'sl');
+        row.appendChild(el('label', '', meta2.label));
+        const inp = el('input');
+        inp.type = 'range'; inp.min = '1'; inp.max = '5'; inp.step = '1'; inp.value = '3';
+        const out = el('output', '', '3');
+        inp.style.setProperty('--fill', '50%');
+        inp.addEventListener('input', () => {
+          vals[i] = parseInt(inp.value, 10);
+          out.textContent = inp.value;
+          inp.style.setProperty('--fill', ((inp.value - 1) / 4 * 100) + '%');
+        });
+        row.appendChild(inp); row.appendChild(out);
+        body.appendChild(row);
+      });
+      const b = el('button', 'btn btn-primary');
+      b.appendChild(el('span', 'lbl', 'Bewertung senden'));
+      b.addEventListener('click', () => send(m.mIdx + '/' + state.pid, vals));
+      body.appendChild(b);
+    } else if (item.type === 'quiz') {
+      const localIdx = (((s.deal || {})[m.mIdx] || {}).order || [])[m.qIdx];
+      const qs = quizQuestions(item.ref);
+      if (localIdx === undefined || !qs[localIdx]) { body.appendChild(waitBlock('Gleich geht es weiter.')); return; }
+      const q = qs[localIdx].q;
+      const perm = (((s.deal || {})[m.mIdx] || {}).perms || {})[localIdx] || [];
+      body.appendChild(el('div', 'pl-q', 'Frage ' + (m.qIdx + 1) + ': ' + q.q));
+      perm.forEach((oi, i) => {
+        const b = el('button', 'ansbtn');
+        b.appendChild(el('span', 'dot', String.fromCharCode(65 + i)));
+        b.appendChild(el('span', '', q.opts[oi]));
+        b.addEventListener('click', () => {
+          body.querySelectorAll('.ansbtn').forEach(x => x.classList.remove('sel'));
+          b.classList.add('sel');
+          send(m.mIdx + '/' + m.qIdx + '/' + state.pid, i);
+        });
+        body.appendChild(b);
+      });
+    } else if (item.type === 'vote') {
+      const task = LIB.TASKS[findTask(VOTE_NAMES[item.ref])];
+      body.appendChild(el('div', 'pl-q', task.name));
+      const sel = { b: null, h: null };
+      const mkRow = (axis) => {
+        body.appendChild(el('p', 'lead', VOTE_AXES[axis].label));
+        const row = el('div', 'row');
+        VOTE_AXES[axis].vals.forEach((v, i) => {
+          const c = el('button', 'chip chip-dim', v);
+          c.style.minHeight = '44px';
+          c.addEventListener('click', () => {
+            sel[axis] = i;
+            row.querySelectorAll('.chip').forEach(x => x.classList.remove('wk-auto'));
+            c.classList.add('wk-auto');
+          });
+          row.appendChild(c);
+        });
+        body.appendChild(row);
+      };
+      mkRow('b'); mkRow('h');
+      const b = el('button', 'btn btn-primary');
+      b.style.marginTop = '10px';
+      b.appendChild(el('span', 'lbl', 'Einschätzung senden'));
+      b.addEventListener('click', () => {
+        if (sel.b === null || sel.h === null) { toast('Bitte beide Einschätzungen wählen.', true); return; }
+        send(m.mIdx + '/' + state.pid, { b: sel.b, h: sel.h });
+      });
+      body.appendChild(b);
+    }
+  }
+  function leave() {
+    if (unsub) unsub(); if (unsubConn) unsubConn();
+    unsub = unsubConn = null;
+    state.session = null; state.role = null;
+    show('home');
+  }
+  return { join, leave, renderPlayer };
+})();
+
+/* ============================================================
+   ABSCHNITT 14: DEMO (lokal, ohne Verbindung)
+   ============================================================ */
+function startDemo() {
+  state.demo = true;
+  state.net = createNet('local');
+  document.body.classList.add('demo');
+  state.playlist = defaultPlaylist();
+  Host.paintBuild();
+  show('build');
+  toast('Demo-Modus: Beim Erstellen treten zwölf simulierte Teilnehmende bei.');
+}
+async function demoAfterCreate() {
+  if (!state.demo) return;
+  await Host.startBots(12);
+}
+
+/* ============================================================
+   ABSCHNITT 15: VALIDIERUNG BEIM LADEN
+   ============================================================ */
+function runValidation() {
+  const errs = [];
+  const ok = (cond, msg) => { if (!cond) errs.push(msg); };
+  ok(Array.isArray(LIB.TASKS) && LIB.TASKS.length === 48, 'Bibliothek: 48 Aufgabentypen erwartet, gefunden ' + LIB.TASKS.length);
+  ok(LIB.FAM.length === 6 && LIB.FAMW.length === 6, 'Bibliothek: sechs Funktionsfamilien erwartet');
+  ok(Math.round(LIB.FAMW.reduce((a, b) => a + b, 0)) === 100, 'Familiengewichte müssen 100 ergeben');
+  const shareSums = {};
+  LIB.TASKS.forEach(t => {
+    shareSums[t.fam] = (shareSums[t.fam] || 0) + t.share;
+    DIM_META.concat(HIDDEN_DIMS.map(k => ({ k }))).forEach(m => {
+      const v = t.d[m.k];
+      ok(Number.isFinite(v) && v >= 1 && v <= 5, 'Dimension ausserhalb 1 bis 5: ' + t.name + ' / ' + m.k);
+    });
+    ok(typeof t.skill === 'string' && t.skill.length > 0, 'Skilling fehlt: ' + t.name);
+  });
+  Object.entries(shareSums).forEach(([f, s]) => ok(Math.abs(s - 100) < 0.01, 'Zeitanteile der Familie ' + f + ' ergeben ' + s + ' statt 100'));
+  ok(QUIZ.length === 24, 'Quiz: 24 Fragen erwartet, gefunden ' + QUIZ.length);
+  for (let r = 0; r < 4; r++) ok(QUIZ.filter(q => q.r === r).length === 6, 'Quiz-Runde ' + (r + 1) + ' braucht genau 6 Fragen');
+  QUIZ.forEach((q, i) => {
+    ok(q.opts.length >= 2 && q.opts.length <= 4, 'Quiz ' + (i + 1) + ': 2 bis 4 Optionen');
+    ok(Number.isInteger(q.a) && q.a >= 0 && q.a < q.opts.length, 'Quiz ' + (i + 1) + ': Antwortindex ausserhalb der Optionen');
+    ok(new Set(q.opts).size === q.opts.length, 'Quiz ' + (i + 1) + ': doppelte Optionen');
+    ok(q.time >= 10 && q.time <= 40, 'Quiz ' + (i + 1) + ': Zeit ausserhalb 10 bis 40 Sekunden');
+    ok(typeof q.why === 'string' && q.why.length > 10, 'Quiz ' + (i + 1) + ': Auflösung fehlt');
+  });
+  KOMP_NAMES.forEach(n => ok(findTask(n) >= 0, 'Kompass-Aufgabe nicht in Bibliothek: ' + n));
+  VOTE_NAMES.forEach(n => ok(findTask(n) >= 0, 'Voting-Aufgabe nicht in Bibliothek: ' + n));
+  ok(PULS.length >= 6 && CLOUD.length >= 3, 'Puls- oder Wortwolken-Inhalte unvollständig');
+  /* Regelwerk gegen fixe Erwartungswerte aus dem Excel-Tool */
+  FIXTURES.pom.forEach((f, i) => {
+    const idx = findTask(f.name);
+    ok(idx === i, 'Proof-of-Method-Reihenfolge verschoben: ' + f.name);
+    const a = assess(LIB.TASKS[idx].d);
+    ok(a.wirkung === f.wirkung && a.horizont === f.horizont && a.status === f.status && a.betroffenheit === f.betroffenheit,
+      'Regelwerk weicht vom Excel-Tool ab bei: ' + f.name);
+  });
+  Object.entries(FIXTURES.kpi).forEach(([k, v]) => {
+    ok(Math.abs(kennzahl(k) - v) < 0.02, 'Kennzahl ' + k + ' weicht ab: ' + kennzahl(k).toFixed(2) + ' statt ' + v);
+  });
+  const wc = {}, sc = {};
+  LIB.TASKS.forEach(t => { const a = assess(t.d); wc[a.wirkung] = (wc[a.wirkung] || 0) + 1; sc[a.status] = (sc[a.status] || 0) + 1; });
+  Object.entries(FIXTURES.counts.wirkung).forEach(([k, v]) => ok(wc[k] === v, 'Wirkungsverteilung weicht ab: ' + k));
+  Object.entries(FIXTURES.counts.status).forEach(([k, v]) => ok(sc[k] === v, 'Statusverteilung weicht ab: ' + k));
+
+  if (errs.length) {
+    console.group('%cJOB REDESIGN LAB: Inhaltsprüfung FEHLGESCHLAGEN', 'color:#C0392B;font-weight:bold');
+    errs.forEach(e => console.error(e));
+    console.groupEnd();
+    const be = $('boot-error');
+    be.textContent = 'Inhaltsprüfung fehlgeschlagen (' + errs.length + ' Punkte, Details in der Konsole). Der Workshop-Teil ist gesperrt.';
+    be.classList.remove('hide');
+    ['btn-go-host', 'btn-go-join', 'btn-go-demo'].forEach(id => $(id).disabled = true);
+    return false;
+  }
+  console.group('%cJOB REDESIGN LAB: Inhaltsprüfung bestanden', 'color:#0E8A5F;font-weight:bold');
+  console.log('48 Aufgabentypen, 24 Quizfragen, Regelwerk deckungsgleich mit dem Excel-Tool.');
+  console.log('Kennzahlen: konservativ ' + kennzahl('konservativ').toFixed(2) + ', ausgewogen ' + kennzahl('ausgewogen').toFixed(2) + ', ambitioniert ' + kennzahl('ambitioniert').toFixed(2));
+  console.groupEnd();
+  return true;
+}
+
+/* ============================================================
+   ABSCHNITT 16: BOOT UND VERDRAHTUNG
+   ============================================================ */
+function boot() {
+  document.querySelectorAll('.js-ver').forEach(n => n.textContent = VERSION);
+  const valid = runValidation();
+  if (!FB_CONFIGURED) {
+    console.warn('Firebase ist noch nicht konfiguriert. Erleben und Demo laufen vollständig, der Live-Workshop benötigt die Konfiguration im CONFIG-Block.');
+  }
+  Erleben.init();
+  /* Landing */
+  $('btn-go-erleben').addEventListener('click', () => Erleben.open('kompass'));
+  $('tab-kompass').addEventListener('click', () => Erleben.setTab('kompass'));
+  $('tab-karte').addEventListener('click', () => Erleben.setTab('karte'));
+  $('btn-go-host').addEventListener('click', () => {
+    if (!FB_CONFIGURED) { toast('Für den Live-Workshop zuerst Firebase im CONFIG-Block eintragen. Die Demo zeigt den Ablauf ohne Verbindung.', true); return; }
+    state.demo = false; state.net = null;
+    Host.openBuild();
+  });
+  $('btn-go-join').addEventListener('click', () => {
+    if (!FB_CONFIGURED) { toast('Der Beitritt braucht die Firebase-Konfiguration. Die Demo zeigt den Ablauf ohne Verbindung.', true); return; }
+    show('join');
+  });
+  $('btn-go-demo').addEventListener('click', startDemo);
+  document.querySelectorAll('.js-home').forEach(b => b.addEventListener('click', () => {
+    if (state.role === 'host') { Host.leave(); } else if (state.role === 'player') { Player.leave(); } else { document.body.classList.remove('demo'); state.demo = false; state.net = null; show('home'); }
+  }));
+  /* Host */
+  $('btn-create').addEventListener('click', async () => { await Host.createSession(); await demoAfterCreate(); });
+  $('btn-start').addEventListener('click', Host.startWorkshop);
+  $('btn-bots').addEventListener('click', () => { setBusy($('btn-bots'), true); Promise.resolve(Host.startBots()).finally(() => setBusy($('btn-bots'), false)); });
+  document.addEventListener('keydown', e => {
+    if (state.screen === 'lobby' && state.role === 'host' && (e.key === 'b' || e.key === 'B') && document.activeElement.tagName !== 'INPUT') Host.startBots();
+  });
+  $('btn-hm-main').addEventListener('click', Host.mainAction);
+  $('btn-hm-export').addEventListener('click', Host.exportCurrent);
+  $('btn-del').addEventListener('click', Host.deleteSession);
+  /* Join */
+  $('btn-join').addEventListener('click', () => Player.join($('join-code').value, $('join-name').value, state.demo ? 'local' : 'fb'));
+  $('join-name').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-join').click(); });
+  /* Deep-Link ?join=CODE */
+  const params = new URLSearchParams(location.search);
+  const jc = (params.get('join') || '').toUpperCase();
+  if (jc && /^[A-Z0-9]{5}$/.test(jc)) {
+    $('join-code').value = jc;
+    if (FB_CONFIGURED && valid) show('join'); else if (!FB_CONFIGURED) toast('Beitritt nicht möglich: Die App ist noch nicht mit Firebase verbunden.', true);
+  }
+  window.addEventListener('resize', () => {
+    if (state.screen === 'erleben') { if (state.erleben.tab === 'kompass') Erleben.paintKompass(); }
+  });
+  Hero.start();
+  /* Countup der Landing-Kennzahlen */
+  document.querySelectorAll('.stat b').forEach(b => countUp(b, parseInt(b.dataset.count, 10), 0, '', 900));
+  console.log('%c' + VERSION, 'color:#0F6FB4;font-weight:bold');
+  /* Test-Hooks: nur Referenzen, keine Verhaltensaenderung */
+  window.__JRL__ = { state, LIB, QUIZ, PULS, CLOUD, KOMP_NAMES, VOTE_NAMES, FIXTURES,
+    assess, kennzahl, beitrag, shuffled, findTask, runValidation, createNet,
+    Host, Player, Bots, Erleben, startDemo, show, MOD_META, quizQuestions };
+}
+document.addEventListener('DOMContentLoaded', boot);
+
+</script>
+</body>
+</html>
