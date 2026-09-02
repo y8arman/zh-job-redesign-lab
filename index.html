@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>JOB REDESIGN LAB</title>
-<meta name="description" content="Interaktiver Demonstrator zur Studie Job Redesign der kantonalen Verwaltung Zürich.">
+<title>ZH REDESIGN LAB</title>
+<meta name="description" content="ZH Redesign Lab: interaktiver Demonstrator zur Studie Job Redesign der kantonalen Verwaltung Zürich.">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="white" stroke="%230F6FB4" stroke-width="4"/><path d="M4 50 A30 30 0 0 0 60 18 Z" fill="%230F6FB4" opacity="0.95"/><path d="M32 10 L38 32 L32 54 L26 32 Z" fill="%230F6FB4"/><circle cx="32" cy="32" r="4" fill="white"/></svg>'>
 <style>
 /* ============================================================
-   JOB REDESIGN LAB  |  Zueri-Blau-Weiss  |  eine Datei
+   ZH REDESIGN LAB  |  Zueri-Blau-Weiss  |  eine Datei
    ============================================================ */
 :root{
   --zueri:#0F6FB4;          /* dominantes Zueriblau, aus der Wappenvorlage gesampelt */
@@ -39,7 +39,7 @@ body{
   color:var(--ink);background:var(--white);line-height:1.45;
   min-height:100svh;overflow-x:hidden;
 }
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
 input,select{font:inherit;color:inherit}
 h1,h2,h3{line-height:1.12;font-weight:800;letter-spacing:-.01em}
 small{color:var(--ink-soft)}
@@ -273,7 +273,7 @@ canvas.mod-canvas{width:100%;border:1px solid var(--field);border-radius:var(--r
 .pod .rk{font-size:34px;font-weight:800;color:var(--zueri-deep);margin-top:6px}
 
 /* ---------- Player (Handy) ---------- */
-.pl-screen{max-width:520px;width:92vw;margin:0 auto;padding:18px 0 30px;flex:1;display:flex;flex-direction:column;gap:14px}
+.pl-screen{max-width:520px;width:92vw;margin:0 auto;padding:18px 0 calc(30px + env(safe-area-inset-bottom));flex:1;display:flex;flex-direction:column;gap:14px}
 .pl-q{font-size:20px;font-weight:800}
 .ansbtn{width:100%;min-height:60px;border-radius:14px;border:1.5px solid var(--line);background:#fff;
   font-weight:700;font-size:16.5px;padding:12px 16px;text-align:left;display:flex;align-items:center;gap:12px;
@@ -326,6 +326,23 @@ body.demo .appbar{top:34px}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
+
+/* ---------- v1.1 Ergaenzungen ---------- */
+.js-ver{cursor:pointer}
+.cd-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:220px}
+.cd-big{font-size:clamp(96px,20vw,200px);font-weight:800;color:var(--zueri);line-height:1;animation:chippop .3s var(--ease)}
+.cd-hint{color:var(--ink-soft);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+.brandline{font-size:20px}
+.brandline .mark{width:64px;height:64px}
+.howlist{display:flex;flex-direction:column;gap:10px;margin-top:10px;max-width:720px}
+.howlist p{font-size:14.5px;color:var(--ink)}
+.howlist b{color:var(--zueri-deep)}
+.botrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.botrow .btn{min-height:44px;padding:0 16px;font-size:14px}
+.mutebtn{min-height:40px;padding:0 10px;font-size:18px;text-decoration:none}
+.ansbtn[disabled]{opacity:.6}
+.ansbtn[disabled].sel{opacity:1}
+.dbg-pre{font-size:12px;background:var(--paper);border:1px solid var(--field);border-radius:10px;padding:10px;max-height:160px;overflow:auto;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -337,7 +354,7 @@ body.demo .appbar{top:34px}
   <div class="hero-fg">
     <div class="brandline">
       <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
-      <span>JOB REDESIGN LAB</span>
+      <span>ZH REDESIGN LAB</span>
     </div>
     <div class="hero-main">
       <div class="kicker">Interaktiver Demonstrator</div>
@@ -350,6 +367,7 @@ body.demo .appbar{top:34px}
       </div>
       <div class="cta-row cta-row-2">
         <button class="btn btn-ghost" id="btn-go-demo"><span class="lbl">Demo ansehen</span></button>
+        <button class="btn btn-ghost" id="btn-how"><span class="lbl">So funktioniert's</span></button>
       </div>
       <div class="stat-row">
         <div class="stat"><b data-count="9">0</b><span>Dimensionen</span></div>
@@ -369,6 +387,7 @@ body.demo .appbar{top:34px}
 <section class="screen" id="scr-erleben">
   <div class="wrap">
     <div class="appbar">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
       <button class="btn btn-quiet js-home">Start</button>
       <span class="ttl">Erleben</span><span class="sub">Methodik zum Anfassen, ohne Anmeldung</span>
       <span class="grow"></span><span class="ver js-ver"></span>
@@ -425,6 +444,7 @@ body.demo .appbar{top:34px}
 <section class="screen" id="scr-build">
   <div class="wrap">
     <div class="appbar">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
       <button class="btn btn-quiet js-home">Start</button>
       <span class="ttl">Session vorbereiten</span><span class="sub">Module wählen und ordnen</span>
       <span class="grow"></span><span class="ver js-ver"></span>
@@ -453,8 +473,11 @@ body.demo .appbar{top:34px}
 <section class="screen" id="scr-lobby">
   <div class="wrap">
     <div class="appbar">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
       <span class="ttl">Lobby</span><span class="sub">Teilnehmende treten jetzt bei</span>
       <span class="grow"></span>
+      <button class="btn btn-quiet" id="btn-how-lobby">So funktioniert's</button>
+      <button class="btn btn-quiet mutebtn js-mute" title="Ton an oder aus">🔊</button>
       <span class="conn" id="conn-h"><i></i><span>Verbindung</span></span>
       <span class="ver js-ver"></span>
     </div>
@@ -472,11 +495,16 @@ body.demo .appbar{top:34px}
         <div class="row"><h2>Teilnehmende</h2><span class="countpill" id="lob-count">0</span></div>
         <div class="player-badges" id="lob-players" style="margin-top:12px"></div>
         <div class="row" style="margin-top:22px">
-          <button class="btn btn-ghost" id="btn-bots"><span class="spin"></span><span class="lbl">15 Test-Bots (B)</span></button>
+          <div class="botrow"><span style="font-size:13px;color:var(--ink-soft);font-weight:700">Test-Bots:</span>
+            <button class="btn btn-ghost js-bots" data-n="3"><span class="spin"></span><span class="lbl">+3</span></button>
+            <button class="btn btn-ghost js-bots" data-n="5"><span class="spin"></span><span class="lbl">+5</span></button>
+            <button class="btn btn-ghost js-bots" data-n="10"><span class="spin"></span><span class="lbl">+10</span></button>
+            <button class="btn btn-ghost js-bots" data-n="15"><span class="spin"></span><span class="lbl">+15 (B)</span></button>
+          </div>
           <span class="spacer"></span>
           <button class="btn btn-primary" id="btn-start"><span class="spin"></span><span class="lbl">Workshop starten</span></button>
         </div>
-        <small style="display:block;margin-top:12px">Vor dem Echteinsatz: mit den Bots einmal alle Module durchspielen. Die Bots verhalten sich wie echte Teilnehmende.</small>
+        <small style="display:block;margin-top:12px">Vor dem Echteinsatz: mit den Bots einmal alle Module durchspielen. Die Bots verhalten sich wie echte Teilnehmende. Maximal 30 Bots pro Session.</small>
       </div>
     </div>
     <div class="foot"><span></span><span class="ver js-ver"></span></div>
@@ -487,9 +515,11 @@ body.demo .appbar{top:34px}
 <section class="screen" id="scr-hostmod">
   <div class="wrap">
     <div class="appbar">
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
       <span class="ttl" id="hm-prog">Modul</span>
       <span class="grow"></span>
       <span class="countpill" id="hm-answered">0 / 0</span>
+      <button class="btn btn-quiet mutebtn js-mute" title="Ton an oder aus">🔊</button>
       <span class="conn" id="conn-h2"><i></i><span>Verbindung</span></span>
       <span class="ver js-ver"></span>
     </div>
@@ -552,6 +582,7 @@ body.demo .appbar{top:34px}
     <div class="row">
       <b id="pl-name"></b><span class="chip chip-dim" id="pl-code"></span>
       <span class="spacer"></span>
+      <button class="btn btn-quiet mutebtn js-mute" title="Ton an oder aus">🔊</button>
       <span class="conn" id="conn-p"><i></i><span>Live</span></span>
     </div>
     <div id="pl-body" style="flex:1;display:flex;flex-direction:column;gap:12px"></div>
@@ -559,6 +590,34 @@ body.demo .appbar{top:34px}
   </div>
 </section>
 
+<div class="backdrop" id="how-bg"></div>
+<div class="drawer" id="how-drawer" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <h2 style="color:var(--zueri-deep)">So funktioniert's</h2>
+  <div class="howlist">
+    <p><b>Beitreten:</b> QR-Code auf der Leinwand scannen oder den Link öffnen, Code eingeben, Alias wählen. Ein Einstieg ist jederzeit möglich, auch mitten im Workshop.</p>
+    <p><b>Mitmachen:</b> Sobald der Host ein Modul startet, erscheint die Eingabe auf Ihrem Gerät. Antworten mit einem Tipp, bei Texten und Reglern das Senden nicht vergessen.</p>
+    <p><b>Challenge-Punkte:</b> Nach dem 3-2-1-Countdown zählt Tempo. Richtig bringt 500 bis 1000 Punkte, je schneller, desto mehr. Jede weitere richtige Antwort in Serie gibt +100 Bonus, bis maximal +500. Falsch oder keine Antwort: 0 Punkte, die Serie endet.</p>
+    <p><b>Module:</b> Je nach Playlist: Stimmungsbild, Wortwolke, gemeinsamer Aufgaben-Kompass, Wissens-Challenge und Betroffenheits-Voting.</p>
+    <p><b>Ergebnisse:</b> entstehen live auf der Leinwand und lassen sich dort als Bild sichern.</p>
+  </div>
+  <div class="row" style="margin-top:14px"><span class="spacer"></span><button class="btn btn-primary" id="btn-how-close"><span class="lbl">Alles klar</span></button></div>
+</div>
+<div class="backdrop" id="dbg-bg"></div>
+<div class="drawer" id="dbg-drawer" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <h2 style="color:var(--zueri-deep)">Debug</h2>
+  <p class="lead" id="dbg-meta"></p>
+  <h3 style="color:var(--zueri-deep);margin:12px 0 6px;font-size:15px">Phasenverlauf (neueste zuerst)</h3>
+  <pre class="dbg-pre" id="dbg-phase"></pre>
+  <h3 style="color:var(--zueri-deep);margin:12px 0 6px;font-size:15px">Fehlerprotokoll (neueste zuerst)</h3>
+  <pre class="dbg-pre" id="dbg-err"></pre>
+  <div class="row" style="margin-top:14px">
+    <button class="btn btn-ghost" id="btn-dbg-copy"><span class="lbl">Protokoll kopieren</span></button>
+    <span class="spacer"></span>
+    <button class="btn btn-quiet" id="btn-dbg-close">Schliessen</button>
+  </div>
+</div>
 <div id="toast" role="status"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -573,7 +632,9 @@ const LIB = {"FAM":["Fachliche Fallbearbeitung","Beratung und Bürgerkontakt","F
    ABSCHNITT 1: KONFIGURATION
    ============================================================ */
 'use strict';
-const VERSION = 'JOB REDESIGN LAB v1.0 (2026-08-31)';
+const VERSION = 'ZH REDESIGN LAB v1.1 (2026-09-02)';
+const CD_MS = () => (window.__ZHRL_CD__ !== undefined ? window.__ZHRL_CD__ : 3000);
+const BOT_LIMIT = 30;
 const DB_ROOT = 'jrl_sessions';
 
 /* --------------------------------------------------------------
@@ -844,6 +905,7 @@ function toast(msg, isErr) {
   const t = $('toast');
   t.textContent = msg;
   t.classList.toggle('err', !!isErr);
+  if (isErr) logErr('toast', { message: msg });
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), isErr ? 5200 : 3200);
@@ -860,6 +922,64 @@ function setBusy(btn, busy) {
   if (!btn) return;
   btn.classList.toggle('is-busy', !!busy);
   btn.disabled = !!busy;
+}
+/* ---------- Ton, Haptik, Protokoll (v1.1) ---------- */
+let AC = null, MASTER = null;
+let MUTED = false;
+try { MUTED = sessionStorage.getItem('zhrl_mute') === '1'; } catch (e) {}
+function ensureAudio() {
+  try {
+    if (!AC) {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      MASTER = AC.createGain(); MASTER.gain.value = MUTED ? 0 : 1; MASTER.connect(AC.destination);
+    }
+    if (AC.state === 'suspended') AC.resume();
+  } catch (e) {}
+}
+function setMuted(m) {
+  MUTED = !!m;
+  if (MASTER) MASTER.gain.value = MUTED ? 0 : 1;
+  try { sessionStorage.setItem('zhrl_mute', MUTED ? '1' : '0'); } catch (e) {}
+  document.querySelectorAll('.js-mute').forEach(b => b.textContent = MUTED ? '🔇' : '🔊');
+}
+function tone(f, dur, type, vol, when, slide) {
+  try {
+    if (!AC || MUTED) return;
+    const t0 = AC.currentTime + (when || 0);
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t0);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol || 0.1, t0 + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(MASTER || AC.destination); o.start(t0); o.stop(t0 + dur + 0.05);
+  } catch (e) {}
+}
+const SFX = {
+  click() { tone(1250, 0.04, 'square', 0.05); },
+  tick() { tone(880, 0.07, 'square', 0.07); },
+  go() { tone(300, 0.26, 'sawtooth', 0.09, 0, 900); },
+  ding() { tone(987, 0.12, 'sine', 0.08); tone(1318, 0.2, 'sine', 0.08, 0.1); },
+  right() { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.15, 'sine', 0.1, i * 0.06)); },
+  wrong() { tone(220, 0.28, 'sawtooth', 0.09, 0, 170); },
+  drum() { for (let i = 0; i < 12; i++) tone(180, 0.05, 'square', 0.06, i * 0.13); },
+  fanfare() { [523, 659, 784].forEach(f => tone(f, 0.8, 'triangle', 0.08)); tone(1047, 0.8, 'triangle', 0.09, 0.15); }
+};
+function vib(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+const ERRLOG = [], PHASELOG = [];
+function logErr(tag, e) {
+  const msg = (e && e.message) ? e.message : String(e);
+  ERRLOG.unshift(new Date().toLocaleTimeString() + '  ' + tag + ': ' + msg);
+  if (ERRLOG.length > 40) ERRLOG.pop();
+}
+let lastPhaseLine = '';
+function logPhase(m) {
+  if (!m) return;
+  const line = m.phase + '/' + m.mstate + '  Modul ' + ((m.mIdx || 0) + 1) + (m.phase === 'module' ? '  F' + ((m.qIdx || 0) + 1) : '');
+  if (line === lastPhaseLine) return;
+  lastPhaseLine = line;
+  PHASELOG.unshift(new Date().toLocaleTimeString() + '  ' + line);
+  if (PHASELOG.length > 30) PHASELOG.pop();
 }
 const rnd = arr => arr[Math.floor(Math.random() * arr.length)];
 function shuffled(n) {
@@ -898,6 +1018,7 @@ const state = {
   name: '',
   session: null,          /* kompletter Snapshot: {meta,playlist,deal,players,live,scores} */
   hostLog: {},            /* {mIdx:{pid:{recvAt}}} lokal beim Host fuer Antwortzeiten */
+  hostQ0: {},             /* {mIdx:qIdx: performance.now() bei Freigabe} */
   playlist: [],           /* Build-Phase */
   erleben: { tab: 'kompass', taskIdx: 0, customName: '', d: null, szen: 'ausgewogen', fam: '' },
   playerSent: {},         /* {mIdx:true|antwort} lokal */
@@ -1153,7 +1274,7 @@ function exportPNG(title, sub, drawFn) {
     ctx.fillStyle = '#3E5A72'; ctx.font = '400 22px "Segoe UI",Roboto,sans-serif';
     ctx.fillText(sub, 60, 122);
     ctx.font = '400 18px "Segoe UI",Roboto,sans-serif';
-    ctx.fillText('JOB REDESIGN LAB', 60, 866);
+    ctx.fillText('ZH REDESIGN LAB', 60, 866);
     ctx.save(); ctx.translate(60, 160); drawFn(ctx, 1480, 660); ctx.restore();
     const a = document.createElement('a');
     a.download = 'job-redesign-lab-' + title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
@@ -1491,10 +1612,15 @@ function makeCode() {
   for (let i = 0; i < 5; i++) c += A[Math.floor(Math.random() * A.length)];
   return c;
 }
+function quizPoints(dtMs, timeS, streak) {
+  const speed = Math.round(500 + 500 * Math.max(0, 1 - dtMs / (timeS * 1000)));
+  const bonus = streak >= 2 ? Math.min(500, 100 * (streak - 1)) : 0;
+  return speed + bonus;
+}
 
 const Host = (() => {
   let unsub = null, unsubConn = null, timerRaf = 0, revealGuard = '';
-  let botFired = {}, botsOn = false;
+  let botFired = {}, botsOn = false, botBusy = false, endSfxFor = '';
 
   /* ---------- Playlist bauen ---------- */
   function openBuild() {
@@ -1569,7 +1695,8 @@ const Host = (() => {
       state.code = code;
       state.role = 'host';
       state.hostLog = {};
-      botFired = {}; botsOn = false;
+      state.hostQ0 = {};
+      botFired = {}; botsOn = false; endSfxFor = '';
       const data = {
         meta: { v: 1, ver: VERSION, created: Date.now(), phase: 'lobby', mIdx: 0, mstate: 'intro', qIdx: 0, qStart: 0, reveal: null, points: true },
         playlist: state.playlist,
@@ -1608,6 +1735,7 @@ const Host = (() => {
       const prev = state.session;
       state.session = s;
       if (!s) return;
+      logPhase(s.meta);
       trackAnswerTimes(prev, s);
       if (botsOn) Bots.tick(s);
       renderHost(s, prev);
@@ -1655,6 +1783,7 @@ const Host = (() => {
   }
   async function mainAction() {
     const s = state.session, m = s.meta, item = s.playlist[m.mIdx];
+    if (item && item.type === 'quiz' && m.mstate === 'countdown') return;
     const btn = $('btn-hm-main');
     setBusy(btn, true);
     try {
@@ -1686,48 +1815,71 @@ const Host = (() => {
         }
       }
     } catch (e) { toast(e.message, true); }
-    finally { setBusy(btn, false); }
+    finally {
+      setBusy(btn, false);
+      const cur = state.session;
+      if (cur && cur.meta && cur.meta.mstate === 'countdown') btn.disabled = true;
+    }
   }
   async function startQuizQuestion(qIdx) {
     revealGuard = '';
-    state.hostLog[state.session.meta.mIdx + ':' + qIdx] = {};
-    await hostUpdate({ 'meta/mstate': 'run', 'meta/qIdx': qIdx, 'meta/qStart': Date.now(), 'meta/reveal': null }, 'Frage starten');
+    const key = state.session.meta.mIdx + ':' + qIdx;
+    state.hostLog[key] = {};
+    state.hostQ0[key] = 0;
+    await hostUpdate({ 'meta/mstate': 'countdown', 'meta/qIdx': qIdx, 'meta/qStart': Date.now(), 'meta/reveal': null }, 'Frage starten');
     startTimerLoop();
   }
   function startTimerLoop() {
     cancelAnimationFrame(timerRaf);
+    let lastN = 0, flipped = false;
     const tick = () => {
       const s = state.session;
-      if (!s || s.meta.phase !== 'module' || s.meta.mstate !== 'run') return;
+      if (!s || s.meta.phase !== 'module') return;
       const item = s.playlist[s.meta.mIdx];
-      if (item.type !== 'quiz') return;
+      if (!item || item.type !== 'quiz') return;
+      const st = s.meta.mstate;
+      if (st !== 'countdown' && st !== 'run') return;
       const q = quizQuestions(item.ref)[dealOrder(s)[s.meta.qIdx]].q;
-      const remain = Math.max(0, q.time - (Date.now() - s.meta.qStart) / 1000);
-      paintTimer(remain, q.time);
-      if (remain <= 0) { autoReveal('Zeit abgelaufen'); return; }
-      if (playerCount(s) > 0 && answeredCount(s) >= playerCount(s)) { autoReveal('alle geantwortet'); return; }
+      const elapsed = Date.now() - s.meta.qStart;
+      if (st === 'countdown') {
+        const n = Math.max(1, Math.ceil((CD_MS() - elapsed) / 1000));
+        paintTimer(n, Math.max(1, CD_MS() / 1000), true);
+        const cd = $('cd-num');
+        if (cd) cd.textContent = String(n);
+        if (n !== lastN) { lastN = n; SFX.tick(); }
+        if (elapsed >= CD_MS() && !flipped) {
+          flipped = true;
+          state.hostQ0[s.meta.mIdx + ':' + s.meta.qIdx] = performance.now();
+          SFX.go();
+          withTimeout(state.net.update(state.code, { 'meta/mstate': 'run' }), 'Frage freigeben')
+            .then(() => {}, e => { flipped = false; toast(e.message, true); });
+        }
+      } else {
+        const remain = Math.max(0, q.time - (elapsed - CD_MS()) / 1000);
+        paintTimer(remain, q.time, false);
+        if (remain <= 0) { revealQuiz(); return; }
+        if (playerCount(s) > 0 && answeredCount(s) >= playerCount(s)) { revealQuiz(); return; }
+      }
       timerRaf = requestAnimationFrame(tick);
     };
     timerRaf = requestAnimationFrame(tick);
   }
-  function autoReveal(reason) {
-    const s = state.session;
-    const key = s.meta.mIdx + ':' + s.meta.qIdx;
-    if (revealGuard === key) return;
-    revealGuard = key;
-    revealQuiz();
-  }
   function dealOrder(s) { return ((s.deal || {})[s.meta.mIdx] || {}).order || []; }
   async function revealQuiz() {
     const s = state.session, m = s.meta, item = s.playlist[m.mIdx];
+    const gkey = m.mIdx + ':' + m.qIdx;
+    if (m.mstate !== 'run' || revealGuard === gkey) return;
+    revealGuard = gkey;
+    cancelAnimationFrame(timerRaf);
     const qs = quizQuestions(item.ref);
     const localIdx = dealOrder(s)[m.qIdx];
     const q = qs[localIdx].q;
     const perm = (s.deal[m.mIdx].perms || {})[localIdx];
     const correctDisplayed = perm.indexOf(q.a);
     const answers = ((s.live || {})[m.mIdx] || {})[m.qIdx] || {};
-    const log = state.hostLog[m.mIdx + ':' + m.qIdx] || {};
-    const qStartLocalGuess = Math.min(...Object.values(log), performance.now());
+    const log = state.hostLog[gkey] || {};
+    const q0 = state.hostQ0[gkey];
+    const anchor = q0 ? q0 : Math.min.apply(null, Object.values(log).concat(performance.now()));
     const patch = { 'meta/mstate': 'result', 'meta/reveal': { correct: correctDisplayed, why: q.why } };
     const scores = Object.assign({}, s.scores || {});
     Object.entries(s.players || {}).forEach(([pid]) => {
@@ -1735,26 +1887,25 @@ const Host = (() => {
       const aIdx = answers[pid];
       let gained = 0, streak = 0;
       if (aIdx === correctDisplayed) {
-        const dt = Math.max(0, (log[pid] || performance.now()) - qStartLocalGuess);
-        const speed = Math.round(500 + 500 * Math.max(0, 1 - dt / (q.time * 1000)));
+        const dt = Math.max(0, (log[pid] || performance.now()) - anchor);
         streak = (prevScore.streak || 0) + 1;
-        const bonus = streak >= 2 ? Math.min(500, 100 * (streak - 1)) : 0;
-        gained = speed + bonus;
+        gained = quizPoints(dt, q.time, streak);
       }
       scores[pid] = { pts: (prevScore.pts || 0) + gained, streak, last: gained, ok: aIdx === correctDisplayed };
       patch['scores/' + pid] = scores[pid];
     });
     await hostUpdate(patch, 'Aufdecken');
+    SFX.ding();
   }
 
   /* ---------- Rendering Host ---------- */
-  function paintTimer(remain, total) {
+  function paintTimer(remain, total, isCd) {
     const wrapEl = $('hm-timer');
     wrapEl.classList.remove('hide');
     $('hm-timer-num').textContent = Math.ceil(remain);
     const C = 194.8;
     $('hm-timer-arc').style.strokeDashoffset = String(C * (1 - remain / total));
-    $('hm-timer-arc').style.stroke = remain <= 5 ? '#C0392B' : BLUE;
+    $('hm-timer-arc').style.stroke = isCd ? BRIGHT : (remain <= 5 ? '#C0392B' : BLUE);
   }
   function renderHost(s, prev) {
     const m = s.meta;
@@ -1764,7 +1915,7 @@ const Host = (() => {
       $('lob-count').textContent = String(names.length);
       const box = $('lob-players');
       clearNode(box);
-      names.slice(0, 60).forEach(n => box.appendChild(el('span', 'pbadge', n)));
+      names.forEach(n => box.appendChild(el('span', 'pbadge', n)));
       return;
     }
     if (m.phase === 'end') { renderEnd(s); return; }
@@ -1775,15 +1926,18 @@ const Host = (() => {
     $('hm-type').textContent = meta.short;
     $('hm-answered').textContent = answeredCount(s) + ' / ' + playerCount(s);
     const mainBtn = $('btn-hm-main').querySelector('.lbl');
-    $('hm-timer').classList.toggle('hide', !(item.type === 'quiz' && m.mstate === 'run'));
+    $('hm-timer').classList.toggle('hide', !(item.type === 'quiz' && (m.mstate === 'run' || m.mstate === 'countdown')));
     if (m.mstate === 'intro') mainBtn.textContent = item.type === 'quiz' ? 'Erste Frage' : 'Starten';
+    else if (m.mstate === 'countdown') mainBtn.textContent = 'Countdown läuft';
     else if (m.mstate === 'run') mainBtn.textContent = 'Aufdecken';
     else mainBtn.textContent = (item.type === 'quiz' && m.qIdx + 1 < quizQuestions(item.ref).length) ? 'Nächste Frage' : 'Weiter';
+    $('btn-hm-main').disabled = (m.mstate === 'countdown');
     const body = $('hm-body');
     Mods[item.type].host(s, item, body, prev);
   }
   function renderEnd(s) {
     if (state.screen !== 'hostend') show('hostend');
+    if (endSfxFor !== state.code) { endSfxFor = state.code; SFX.drum(); setTimeout(() => SFX.fanfare(), 1200); }
     const pod = $('end-podium');
     clearNode(pod);
     const ranked = Object.entries(s.scores || {})
@@ -1836,15 +1990,19 @@ const Host = (() => {
     Mods[item.type].exportPng(s, item);
   }
   function startBots(n) {
-    if (!state.session) return Promise.resolve();
+    if (!state.session || botBusy) return Promise.resolve();
     n = n || 15;
+    const have = Bots.count();
+    const add = Math.min(n, BOT_LIMIT - have);
+    if (add <= 0) { toast('Bot-Limit erreicht: maximal ' + BOT_LIMIT + ' Bots pro Session.', true); return Promise.resolve(); }
+    botBusy = true;
     botsOn = true;
-    return Bots.spawn(state.net, state.code, n).then(() => {
-      toast(n + ' Bots sind beigetreten und spielen mit.');
+    return Bots.spawn(state.net, state.code, add).then(() => {
+      toast(add + ' Bots beigetreten, jetzt ' + Bots.count() + ' von ' + BOT_LIMIT + '.');
       Bots.tick(state.session);
-    }).catch(e => toast(e.message, true));
+    }).catch(e => toast(e.message, true)).finally(() => { botBusy = false; });
   }
-  return { openBuild, paintBuild, createSession, startWorkshop, mainAction, deleteSession, leave, exportCurrent, startBots, get botsOn() { return botsOn; } };
+  return { openBuild, paintBuild, createSession, startWorkshop, mainAction, deleteSession, leave, exportCurrent, startBots, _reveal: revealQuiz, get botsOn() { return botsOn; } };
 })();
 
 /* ============================================================
@@ -2021,14 +2179,21 @@ Mods.quiz = {
   host(s, item, body) {
     if (s.meta.mstate === 'intro') {
       introBody(body, item);
-      $('hm-q').textContent = 'Runde: ' + QUIZ_ROUNDS[item.ref] + ' (6 Fragen)';
+      $('hm-q').textContent = 'Runde: ' + QUIZ_ROUNDS[item.ref] + ' (' + quizQuestions(item.ref).length + ' Fragen)';
       return;
     }
     const { q, perm } = this.q(s, item);
-    $('hm-q').textContent = 'Frage ' + (s.meta.qIdx + 1) + ' von 6: ' + q.q;
+    $('hm-q').textContent = 'Frage ' + (s.meta.qIdx + 1) + ' von ' + quizQuestions(item.ref).length + ': ' + q.q;
     clearNode(body);
     const displayed = perm.map(oi => q.opts[oi]);
-    if (s.meta.mstate === 'run') {
+    if (s.meta.mstate === 'countdown') {
+      const wrap = el('div', 'cd-wrap');
+      const num = el('div', 'cd-big', '3');
+      num.id = 'cd-num';
+      wrap.appendChild(num);
+      wrap.appendChild(el('div', 'cd-hint', 'Bereitmachen ...'));
+      body.appendChild(wrap);
+    } else if (s.meta.mstate === 'run') {
       const wrap = el('div', 'hbars');
       displayed.forEach((lab, i) => {
         const row = el('div', 'hbar');
@@ -2137,13 +2302,16 @@ Mods.vote = {
    ============================================================ */
 const Bots = (() => {
   const WORDPOOL = ['Protokolle', 'Berichte', 'Ablage', 'Recherche', 'Terminplanung', 'Datenerfassung', 'Zusammenfassen', 'Vertrauen', 'Transparenz', 'Verantwortung', 'Neugier', 'Qualität', 'Urteilskraft', 'Prüfen', 'Zusammenarbeit', 'Entlastung', 'Lernen', 'Klarheit'];
-  let bots = [], fired = {}, net = null, code = '';
+  const BOT_NAMES = ['Aktenheld', 'Pendenzia', 'Verfügix', 'Stempelina', 'Frau Frist', 'Herr Gsuch', 'Formulara', 'Dossiera', 'Paragrafo', 'Weisungia', 'Vollzugo', 'Registra', 'Protokolla', 'Signatura', 'Beilagius', 'Zürivia', 'Limmatia', 'Sihlvia', 'Uetlibert', 'Kantonia', 'Direktia', 'Traktanda', 'Vernehmia', 'Fristina', 'Ablagia', 'Visuma', 'Depescha', 'Amtlia', 'Rekursia', 'Gebührix'];
+  let bots = [], fired = {}, net = null, code = '', nameIdx = 0, nameOrder = shuffled(BOT_NAMES.length);
+  function count() { return bots.length; }
   async function spawn(theNet, theCode, n) {
     net = theNet; code = theCode;
-    bots = [];
-    for (let i = 1; i <= n; i++) {
-      const pid = 'bot_' + String(i).padStart(2, '0') + '_' + Math.random().toString(36).slice(2, 7);
-      const name = 'Bot ' + String(i).padStart(2, '0');
+    for (let i = 0; i < n; i++) {
+      const base = BOT_NAMES[nameOrder[nameIdx % BOT_NAMES.length]];
+      nameIdx++;
+      const name = base + ' (Bot)';
+      const pid = 'bot_' + String(bots.length + 1).padStart(2, '0') + '_' + Math.random().toString(36).slice(2, 7);
       bots.push({ pid, name });
       await withTimeout(net.writePlayer(code, pid, { name, ts: Date.now(), bot: true }), 'Bot beitreten');
     }
@@ -2196,18 +2364,35 @@ const Bots = (() => {
       await net.writeLive(code, m.mIdx + '/' + b.pid, { b: clamp(bBias + jig(), 0, 2), h: clamp(hBias + jig(), 0, 2) });
     }
   }
-  function stop() { bots = []; fired = {}; }
-  return { spawn, tick, stop };
+  function stop() { bots = []; fired = {}; nameIdx = 0; nameOrder = shuffled(BOT_NAMES.length); }
+  return { spawn, tick, stop, count, pool: BOT_NAMES.slice() };
 })();
 
 /* ============================================================
    ABSCHNITT 13: TEILNEHMENDE
    ============================================================ */
 const Player = (() => {
-  let unsub = null, unsubConn = null;
+  let unsub = null, unsubConn = null, lastSig = '', lastFeedback = '';
   function sentKey(s) {
     const m = s.meta, item = s.playlist[m.mIdx];
     return m.mIdx + ':' + (item && item.type === 'quiz' ? m.qIdx : 'x');
+  }
+  function sigOf(s) {
+    if (!s) return 'gone';
+    const m = s.meta || {};
+    const sc = (s.scores || {})[state.pid] || {};
+    const k = sentKey(s);
+    return [m.phase, m.mIdx, m.mstate, m.qIdx, (m.reveal || {}).correct,
+      state.playerSent[k] === undefined ? 'open' : 'sent',
+      sc.pts || 0, sc.last || 0].join('|');
+  }
+  function onSnap(s) {
+    state.session = s;
+    logPhase(s && s.meta);
+    const g = sigOf(s);
+    if (g === lastSig) return;
+    lastSig = g;
+    renderPlayer(s);
   }
   async function join(code, name, netMode) {
     const btn = $('btn-join');
@@ -2230,7 +2415,8 @@ const Player = (() => {
       $('pl-code').textContent = code;
       if (unsub) unsub(); if (unsubConn) unsubConn();
       unsubConn = state.net.connWatch(setConn);
-      unsub = state.net.watch(code, s => { state.session = s; renderPlayer(s); });
+      lastSig = ''; lastFeedback = '';
+      unsub = state.net.watch(code, onSnap);
       show('player');
     } catch (e) {
       toast(e.message, true);
@@ -2249,6 +2435,7 @@ const Player = (() => {
     try {
       await withTimeout(state.net.writeLive(state.code, sub, val), 'Antwort senden');
       state.playerSent[k] = val;
+      lastSig = sigOf(state.session);
       renderPlayer(state.session);
       if (doneLabel) toast(doneLabel);
     } catch (e) { toast(e.message, true); }
@@ -2283,6 +2470,11 @@ const Player = (() => {
         const my = state.playerSent[k];
         const correct = (m.reveal || {}).correct;
         const sc = (s.scores || {})[state.pid] || {};
+        if (lastFeedback !== k) {
+          lastFeedback = k;
+          if (my === correct) { SFX.right(); vib([30, 50, 30]); }
+          else if (my !== undefined) { SFX.wrong(); vib(90); }
+        }
         if (my === undefined) body.appendChild(el('div', 'feedback-big', 'Keine Antwort abgegeben.'));
         else if (my === correct) {
           body.appendChild(el('div', 'feedback-big', 'Richtig!'));
@@ -2303,6 +2495,17 @@ const Player = (() => {
       }
       return;
     }
+    if (m.mstate === 'countdown') {
+      if (item.type === 'quiz') {
+        const localIdx = (((s.deal || {})[m.mIdx] || {}).order || [])[m.qIdx];
+        const qs = quizQuestions(item.ref);
+        if (localIdx !== undefined && qs[localIdx]) {
+          body.appendChild(el('div', 'pl-q', 'Frage ' + (m.qIdx + 1) + ' von ' + qs.length + ': ' + qs[localIdx].q.q));
+        }
+      }
+      body.appendChild(waitBlock('Bereitmachen ...', 'Die Antworten erscheinen gleich.'));
+      return;
+    }
     /* mstate === run */
     if (state.playerSent[k] !== undefined) {
       body.appendChild(waitBlock('Antwort gesendet.', 'Warten auf die anderen.'));
@@ -2315,7 +2518,15 @@ const Player = (() => {
         const b = el('button', 'ansbtn');
         b.appendChild(el('span', 'dot', String.fromCharCode(65 + i)));
         b.appendChild(el('span', '', o));
-        b.addEventListener('click', () => send(m.mIdx + '/' + state.pid, i));
+        b.addEventListener('click', () => {
+          const all = body.querySelectorAll('.ansbtn');
+          all.forEach(x => x.disabled = true);
+          b.classList.add('sel');
+          SFX.click(); vib(20);
+          send(m.mIdx + '/' + state.pid, i).then(() => {
+            if (state.playerSent[k] === undefined) all.forEach(x => { x.disabled = false; });
+          });
+        });
         body.appendChild(b);
       });
     } else if (item.type === 'cloud') {
@@ -2335,7 +2546,8 @@ const Player = (() => {
       b.addEventListener('click', () => {
         const words = inputs.map(x => normWord(x.value)).filter(Boolean);
         if (!words.length) { toast('Bitte mindestens einen Begriff eingeben.', true); return; }
-        send(m.mIdx + '/' + state.pid, words.join('|'));
+        setBusy(b, true); SFX.click(); vib(20);
+        send(m.mIdx + '/' + state.pid, words.join('|')).finally(() => setBusy(b, false));
       });
       body.appendChild(b);
     } else if (item.type === 'komp') {
@@ -2361,7 +2573,10 @@ const Player = (() => {
       });
       const b = el('button', 'btn btn-primary');
       b.appendChild(el('span', 'lbl', 'Bewertung senden'));
-      b.addEventListener('click', () => send(m.mIdx + '/' + state.pid, vals));
+      b.addEventListener('click', () => {
+        setBusy(b, true); SFX.click(); vib(20);
+        send(m.mIdx + '/' + state.pid, vals).finally(() => setBusy(b, false));
+      });
       body.appendChild(b);
     } else if (item.type === 'quiz') {
       const localIdx = (((s.deal || {})[m.mIdx] || {}).order || [])[m.qIdx];
@@ -2375,9 +2590,13 @@ const Player = (() => {
         b.appendChild(el('span', 'dot', String.fromCharCode(65 + i)));
         b.appendChild(el('span', '', q.opts[oi]));
         b.addEventListener('click', () => {
-          body.querySelectorAll('.ansbtn').forEach(x => x.classList.remove('sel'));
+          const all = body.querySelectorAll('.ansbtn');
+          all.forEach(x => { x.disabled = true; x.classList.remove('sel'); });
           b.classList.add('sel');
-          send(m.mIdx + '/' + m.qIdx + '/' + state.pid, i);
+          SFX.click(); vib(20);
+          send(m.mIdx + '/' + m.qIdx + '/' + state.pid, i).then(() => {
+            if (state.playerSent[k] === undefined) all.forEach(x => { x.disabled = false; });
+          });
         });
         body.appendChild(b);
       });
@@ -2406,7 +2625,8 @@ const Player = (() => {
       b.appendChild(el('span', 'lbl', 'Einschätzung senden'));
       b.addEventListener('click', () => {
         if (sel.b === null || sel.h === null) { toast('Bitte beide Einschätzungen wählen.', true); return; }
-        send(m.mIdx + '/' + state.pid, { b: sel.b, h: sel.h });
+        setBusy(b, true); SFX.click(); vib(20);
+        send(m.mIdx + '/' + state.pid, { b: sel.b, h: sel.h }).finally(() => setBusy(b, false));
       });
       body.appendChild(b);
     }
@@ -2414,10 +2634,11 @@ const Player = (() => {
   function leave() {
     if (unsub) unsub(); if (unsubConn) unsubConn();
     unsub = unsubConn = null;
+    lastSig = ''; lastFeedback = '';
     state.session = null; state.role = null;
     show('home');
   }
-  return { join, leave, renderPlayer };
+  return { join, leave, renderPlayer, onSnap };
 })();
 
 /* ============================================================
@@ -2485,7 +2706,7 @@ function runValidation() {
   Object.entries(FIXTURES.counts.status).forEach(([k, v]) => ok(sc[k] === v, 'Statusverteilung weicht ab: ' + k));
 
   if (errs.length) {
-    console.group('%cJOB REDESIGN LAB: Inhaltsprüfung FEHLGESCHLAGEN', 'color:#C0392B;font-weight:bold');
+    console.group('%cZH REDESIGN LAB: Inhaltsprüfung FEHLGESCHLAGEN', 'color:#C0392B;font-weight:bold');
     errs.forEach(e => console.error(e));
     console.groupEnd();
     const be = $('boot-error');
@@ -2494,7 +2715,7 @@ function runValidation() {
     ['btn-go-host', 'btn-go-join', 'btn-go-demo'].forEach(id => $(id).disabled = true);
     return false;
   }
-  console.group('%cJOB REDESIGN LAB: Inhaltsprüfung bestanden', 'color:#0E8A5F;font-weight:bold');
+  console.group('%cZH REDESIGN LAB: Inhaltsprüfung bestanden', 'color:#0E8A5F;font-weight:bold');
   console.log('48 Aufgabentypen, 24 Quizfragen, Regelwerk deckungsgleich mit dem Excel-Tool.');
   console.log('Kennzahlen: konservativ ' + kennzahl('konservativ').toFixed(2) + ', ausgewogen ' + kennzahl('ausgewogen').toFixed(2) + ', ambitioniert ' + kennzahl('ambitioniert').toFixed(2));
   console.groupEnd();
@@ -2506,6 +2727,36 @@ function runValidation() {
    ============================================================ */
 function boot() {
   document.querySelectorAll('.js-ver').forEach(n => n.textContent = VERSION);
+  document.querySelectorAll('.js-mute').forEach(b => { b.textContent = MUTED ? '🔇' : '🔊'; b.addEventListener('click', () => { ensureAudio(); setMuted(!MUTED); }); });
+  document.addEventListener('pointerdown', ensureAudio, { once: true });
+  window.addEventListener('error', e => logErr('window', e.error || e.message));
+  window.addEventListener('unhandledrejection', e => logErr('promise', e.reason));
+  window.addEventListener('beforeunload', e => {
+    if (state.role === 'host' && !state.demo && state.session && state.session.meta && state.session.meta.phase !== 'end') {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+  const openHow = () => { $('how-drawer').classList.add('open'); $('how-bg').classList.add('open'); };
+  const closeHow = () => { $('how-drawer').classList.remove('open'); $('how-bg').classList.remove('open'); };
+  $('btn-how').addEventListener('click', openHow);
+  $('btn-how-lobby').addEventListener('click', openHow);
+  $('btn-how-close').addEventListener('click', closeHow);
+  $('how-bg').addEventListener('click', closeHow);
+  const openDbg = () => {
+    $('dbg-meta').textContent = VERSION + '  |  Rolle: ' + (state.role || 'keine') + '  |  Code: ' + (state.code || 'keiner') + '  |  Teilnehmende: ' + Object.keys((state.session || {}).players || {}).length;
+    $('dbg-phase').textContent = PHASELOG.join('\n') || 'noch leer';
+    $('dbg-err').textContent = ERRLOG.join('\n') || 'keine Fehler protokolliert';
+    $('dbg-drawer').classList.add('open'); $('dbg-bg').classList.add('open');
+  };
+  const closeDbg = () => { $('dbg-drawer').classList.remove('open'); $('dbg-bg').classList.remove('open'); };
+  document.querySelectorAll('.js-ver').forEach(n => n.addEventListener('click', openDbg));
+  $('btn-dbg-close').addEventListener('click', closeDbg);
+  $('dbg-bg').addEventListener('click', closeDbg);
+  $('btn-dbg-copy').addEventListener('click', () => {
+    const txt = VERSION + '\n\nPhasen:\n' + PHASELOG.join('\n') + '\n\nFehler:\n' + ERRLOG.join('\n');
+    navigator.clipboard.writeText(txt).then(() => toast('Protokoll kopiert.'), () => toast('Kopieren nicht möglich.', true));
+  });
   const valid = runValidation();
   if (!FB_CONFIGURED) {
     console.warn('Firebase ist noch nicht konfiguriert. Erleben und Demo laufen vollständig, der Live-Workshop benötigt die Konfiguration im CONFIG-Block.');
@@ -2531,9 +2782,13 @@ function boot() {
   /* Host */
   $('btn-create').addEventListener('click', async () => { await Host.createSession(); await demoAfterCreate(); });
   $('btn-start').addEventListener('click', Host.startWorkshop);
-  $('btn-bots').addEventListener('click', () => { setBusy($('btn-bots'), true); Promise.resolve(Host.startBots()).finally(() => setBusy($('btn-bots'), false)); });
+  document.querySelectorAll('.js-bots').forEach(b => b.addEventListener('click', () => {
+    const n = parseInt(b.dataset.n, 10);
+    setBusy(b, true);
+    Promise.resolve(Host.startBots(n)).finally(() => setBusy(b, false));
+  }));
   document.addEventListener('keydown', e => {
-    if (state.screen === 'lobby' && state.role === 'host' && (e.key === 'b' || e.key === 'B') && document.activeElement.tagName !== 'INPUT') Host.startBots();
+    if (state.screen === 'lobby' && state.role === 'host' && (e.key === 'b' || e.key === 'B') && document.activeElement.tagName !== 'INPUT') Host.startBots(15);
   });
   $('btn-hm-main').addEventListener('click', Host.mainAction);
   $('btn-hm-export').addEventListener('click', Host.exportCurrent);
@@ -2558,7 +2813,8 @@ function boot() {
   /* Test-Hooks: nur Referenzen, keine Verhaltensaenderung */
   window.__JRL__ = { state, LIB, QUIZ, PULS, CLOUD, KOMP_NAMES, VOTE_NAMES, FIXTURES,
     assess, kennzahl, beitrag, shuffled, findTask, runValidation, createNet,
-    Host, Player, Bots, Erleben, startDemo, show, MOD_META, quizQuestions };
+    Host, Player, Bots, Erleben, startDemo, show, MOD_META, quizQuestions,
+    quizPoints, CD_MS, BOT_LIMIT, SFX, setMuted, logErr, ERRLOG, PHASELOG };
 }
 document.addEventListener('DOMContentLoaded', boot);
 
