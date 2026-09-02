@@ -63,20 +63,20 @@ small{color:var(--ink-soft)}
 .hero-main{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:820px}
 .kicker{color:var(--zueri);font-weight:800;letter-spacing:.18em;font-size:12px;text-transform:uppercase;
   opacity:0;animation:fadeup .7s var(--ease) .1s forwards}
-h1.hero-title{font-size:clamp(44px,7.2vw,84px);color:var(--ink);margin:.15em 0 .2em;
+h1.hero-title{font-size:clamp(40px,6.6vw,76px);color:var(--ink);margin:.15em 0 .2em;
   opacity:0;animation:fadeup .7s var(--ease) .22s forwards}
 h1.hero-title .blue{color:var(--zueri)}
-.tagline{font-size:clamp(16px,1.8vw,21px);color:var(--ink-soft);max-width:640px;
+.tagline{font-size:clamp(15px,1.7vw,19px);color:var(--ink-soft);max-width:640px;
   opacity:0;animation:fadeup .7s var(--ease) .34s forwards}
 @keyframes fadeup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(20px,3.5vh,36px);
   opacity:0;animation:fadeup .7s var(--ease) .46s forwards}
-.cta-row-2{margin-top:14px;opacity:0;animation:fadeup .7s var(--ease) .55s forwards}
+.cta-row-2{margin-top:26px;opacity:0;animation:fadeup .7s var(--ease) .55s forwards}
 .stat-row{display:flex;gap:14px;margin-top:clamp(22px,4vh,40px);flex-wrap:wrap;
   opacity:0;animation:fadeup .7s var(--ease) .64s forwards}
 .stat{background:rgba(255,255,255,.96);border:1.5px solid var(--line);border-radius:14px;
   padding:12px 22px 13px;box-shadow:var(--sh);min-width:148px;text-align:center}
-.stat b{font-size:clamp(26px,3.2vw,38px);color:var(--zueri);font-weight:800;display:block;line-height:1;
+.stat b{font-size:clamp(24px,3vw,34px);color:var(--zueri);font-weight:800;display:block;line-height:1;
   margin-bottom:5px;font-variant-numeric:tabular-nums}
 .stat span{font-size:13px;color:var(--ink-soft);white-space:nowrap;font-weight:600}
 .hero-foot{position:relative;z-index:2;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
@@ -95,6 +95,9 @@ h1.hero-title .blue{color:var(--zueri)}
 .btn-bright:hover{filter:brightness(1.06)}
 .btn-ghost{background:rgba(255,255,255,.9);color:var(--zueri-deep);border:1.5px solid var(--line)}
 .btn-ghost:hover{background:#fff;border-color:var(--zueri-bright)}
+.btn-dark{background:#0A2239;border-color:#0A2239;color:#fff}
+.btn-dark:hover{background:#103454;border-color:#103454}
+.btn-dark .spin{border-color:rgba(255,255,255,.35);border-top-color:#fff}
 .btn-quiet{color:var(--zueri-deep);min-height:40px;font-size:14px;text-decoration:underline;text-underline-offset:3px}
 .btn-danger{background:var(--risk-l);color:var(--risk);border:1.5px solid #E9B4AC}
 .btn[disabled]{opacity:.55;pointer-events:none}
@@ -307,11 +310,6 @@ canvas.mod-canvas{width:100%;border:1px solid var(--field);border-radius:var(--r
 .foot .ver{margin-left:auto}
 
 /* ---------- Demo-Banner ---------- */
-#demo-banner{position:fixed;top:0;left:0;right:0;z-index:90;background:var(--zueri);color:#fff;
-  text-align:center;font-weight:700;font-size:13px;padding:7px 12px;display:none;
-  clip-path:polygon(0 0,100% 0,100% 72%,0 100%)}
-body.demo #demo-banner{display:block}
-body.demo .appbar{top:34px}
 
 /* ---------- Diagonal-Sektionen ---------- */
 .diag-top{clip-path:polygon(0 0,100% 6%,100% 100%,0 100%)}
@@ -327,13 +325,13 @@ body.demo .appbar{top:34px}
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
 }
 
-/* ---------- v1.1 Ergaenzungen ---------- */
+/* ---------- Ergaenzungen seit v1.0 ---------- */
 .js-ver{cursor:pointer}
 .cd-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:220px}
 .cd-big{font-size:clamp(96px,20vw,200px);font-weight:800;color:var(--zueri);line-height:1;animation:chippop .3s var(--ease)}
 .cd-hint{color:var(--ink-soft);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
-.brandline{font-size:20px}
-.brandline .mark{width:64px;height:64px}
+.brandline{font-size:clamp(24px,2.6vw,34px);letter-spacing:.01em}
+.brandline .mark{width:clamp(56px,6vw,80px);height:clamp(56px,6vw,80px)}
 .howlist{display:flex;flex-direction:column;gap:10px;margin-top:10px;max-width:720px}
 .howlist p{font-size:14.5px;color:var(--ink)}
 .howlist b{color:var(--zueri-deep)}
@@ -342,11 +340,16 @@ body.demo .appbar{top:34px}
 .mutebtn{min-height:40px;padding:0 10px;font-size:18px;text-decoration:none}
 .ansbtn[disabled]{opacity:.6}
 .ansbtn[disabled].sel{opacity:1}
+#how-drawer{inset:0;max-height:none;border-radius:0;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+#how-drawer .grab{display:none}
+#how-drawer h2,#how-drawer .howlist,#how-drawer .row{max-width:860px;margin-left:auto;margin-right:auto}
+#how-drawer h2{margin-top:6px}
+#how-drawer .row{margin-top:20px}
+.howlist h3{color:var(--zueri-deep);font-size:16px;margin-top:8px}
 .dbg-pre{font-size:12px;background:var(--paper);border:1px solid var(--field);border-radius:10px;padding:10px;max-height:160px;overflow:auto;white-space:pre-wrap}
 </style>
 </head>
 <body>
-<div id="demo-banner">DEMO-MODUS: simulierte Teilnehmende, keine Verbindung, keine Speicherung</div>
 
 <!-- ================= S0 LANDING ================= -->
 <section class="screen is-active" id="scr-home">
@@ -359,15 +362,14 @@ body.demo .appbar{top:34px}
     <div class="hero-main">
       <div class="kicker">Interaktiver Demonstrator</div>
       <h1 class="hero-title">Aufgaben verstehen.<br><span class="blue">Zukunft gestalten.</span></h1>
-      <p class="tagline">Interaktiver Demonstrator zur Studie Job Redesign der kantonalen Verwaltung Zürich. Aufgaben verstehen, Betroffenheit bewerten, Zukunft gestalten.</p>
+      <p class="tagline">Interaktiver Demonstrator und Workshop-Quiz-Tool zur Studie Job Redesign in der kantonalen Verwaltung. Aufgaben verstehen, Betroffenheit bewerten, Zukunft gestalten.</p>
       <div class="cta-row">
-        <button class="btn btn-primary" id="btn-go-erleben"><span class="lbl">Erleben</span></button>
+        <button class="btn btn-primary" id="btn-go-erleben"><span class="lbl">Aufgaben-Check</span></button>
         <button class="btn btn-bright" id="btn-go-host"><span class="spin"></span><span class="lbl">Workshop starten</span></button>
         <button class="btn btn-ghost" id="btn-go-join"><span class="lbl">Workshop beitreten</span></button>
       </div>
       <div class="cta-row cta-row-2">
-        <button class="btn btn-ghost" id="btn-go-demo"><span class="lbl">Demo ansehen</span></button>
-        <button class="btn btn-ghost" id="btn-how"><span class="lbl">So funktioniert's</span></button>
+        <button class="btn btn-dark" id="btn-how"><span class="lbl">So funktioniert's</span></button>
       </div>
       <div class="stat-row">
         <div class="stat"><b data-count="9">0</b><span>Dimensionen</span></div>
@@ -389,7 +391,7 @@ body.demo .appbar{top:34px}
     <div class="appbar">
       <svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#0F6FB4" stroke-width="4"/><path d="M5 49 A29 29 0 0 0 59 19 Z" fill="#0F6FB4" opacity=".95"/><path d="M32 11 L38 32 L32 53 L26 32 Z" fill="#0F6FB4"/><circle cx="32" cy="32" r="4" fill="#fff"/></svg>
       <button class="btn btn-quiet js-home">Start</button>
-      <span class="ttl">Erleben</span><span class="sub">Methodik zum Anfassen, ohne Anmeldung</span>
+      <span class="ttl">Aufgaben-Check</span><span class="sub">Methodik zum Anfassen, ohne Anmeldung</span>
       <span class="grow"></span><span class="ver js-ver"></span>
     </div>
     <div class="tabs">
@@ -595,11 +597,18 @@ body.demo .appbar{top:34px}
   <div class="grab"></div>
   <h2 style="color:var(--zueri-deep)">So funktioniert's</h2>
   <div class="howlist">
-    <p><b>Beitreten:</b> QR-Code auf der Leinwand scannen oder den Link öffnen, Code eingeben, Alias wählen. Ein Einstieg ist jederzeit möglich, auch mitten im Workshop.</p>
-    <p><b>Mitmachen:</b> Sobald der Host ein Modul startet, erscheint die Eingabe auf Ihrem Gerät. Antworten mit einem Tipp, bei Texten und Reglern das Senden nicht vergessen.</p>
-    <p><b>Challenge-Punkte:</b> Nach dem 3-2-1-Countdown zählt Tempo. Richtig bringt 500 bis 1000 Punkte, je schneller, desto mehr. Jede weitere richtige Antwort in Serie gibt +100 Bonus, bis maximal +500. Falsch oder keine Antwort: 0 Punkte, die Serie endet.</p>
-    <p><b>Module:</b> Je nach Playlist: Stimmungsbild, Wortwolke, gemeinsamer Aufgaben-Kompass, Wissens-Challenge und Betroffenheits-Voting.</p>
-    <p><b>Ergebnisse:</b> entstehen live auf der Leinwand und lassen sich dort als Bild sichern.</p>
+    <h3>Aufgaben-Check (Einzelmodus, ohne Anmeldung)</h3>
+    <p>Der schnellste Einstieg in die Methodik der Studie. Im Tab <b>Aufgaben-Kompass</b> wählen Sie einen der 48 Aufgabentypen oder beschreiben eine eigene Aufgabe, stellen das Profil über neun Dimensionen ein und sehen sofort Radar, Automatisierungs-Status und Kennzahl. Das Regelwerk entspricht dem Simulationstool der Studie. Im Tab <b>Betroffenheitslandkarte</b> liegen alle 48 Aufgabentypen im Überblick, filterbar nach Funktionsfamilie und umschaltbar zwischen den Szenarien.</p>
+    <h3>Workshop starten (Moderation)</h3>
+    <p>«Workshop starten» wählen, Module für die Playlist zusammenstellen und die Session erstellen. Auf der Leinwand erscheinen QR-Code und Session-Code für den Beitritt. Sie schalten die Module durch: Starten, bei Quizfragen läuft der 3-2-1-Countdown automatisch, dann Aufdecken und Weiter. In der Lobby lassen sich bis zu 30 Test-Bots zuschalten, um Ablauf und Leinwand vorab bei voller Teilnehmerzahl zu proben.</p>
+    <h3>Beitreten (Teilnehmende)</h3>
+    <p>QR-Code auf der Leinwand scannen oder den Link öffnen, Session-Code eingeben, Alias wählen, fertig. Ein Einstieg ist jederzeit möglich, auch mitten im Workshop. Sobald die Moderation ein Modul startet, erscheint die Eingabe automatisch auf Ihrem Gerät. Antworten mit einem Tipp, bei Texten und Reglern das Senden nicht vergessen.</p>
+    <h3>Challenge-Punkte</h3>
+    <p>Nach dem 3-2-1-Countdown zählt Tempo. Richtig bringt 500 bis 1000 Punkte, je schneller, desto mehr. Jede weitere richtige Antwort in Serie gibt +100 Bonus, bis maximal +500. Falsch oder keine Antwort: 0 Punkte, die Serie endet.</p>
+    <h3>Ergebnisse</h3>
+    <p>Stimmungsbild, Wortwolke, Kompass und Voting entstehen live auf der Leinwand und lassen sich dort als Bild sichern.</p>
+    <h3>Diagnose</h3>
+    <p>Ein Klick auf die Versionsnummer am unteren Bildschirmrand öffnet das Diagnosefenster mit Phasenverlauf und Fehlerprotokoll. Bei Supportfragen einfach «Protokoll kopieren» wählen und den Inhalt mitschicken.</p>
   </div>
   <div class="row" style="margin-top:14px"><span class="spacer"></span><button class="btn btn-primary" id="btn-how-close"><span class="lbl">Alles klar</span></button></div>
 </div>
@@ -632,7 +641,7 @@ const LIB = {"FAM":["Fachliche Fallbearbeitung","Beratung und Bürgerkontakt","F
    ABSCHNITT 1: KONFIGURATION
    ============================================================ */
 'use strict';
-const VERSION = 'ZH REDESIGN LAB v1.1 (2026-09-02)';
+const VERSION = 'ZH REDESIGN LAB v2.0 (2026-09-02)';
 const CD_MS = () => (window.__ZHRL_CD__ !== undefined ? window.__ZHRL_CD__ : 3000);
 const BOT_LIMIT = 30;
 const DB_ROOT = 'jrl_sessions';
@@ -923,7 +932,7 @@ function setBusy(btn, busy) {
   btn.classList.toggle('is-busy', !!busy);
   btn.disabled = !!busy;
 }
-/* ---------- Ton, Haptik, Protokoll (v1.1) ---------- */
+/* ---------- Ton, Haptik, Protokoll ---------- */
 let AC = null, MASTER = null;
 let MUTED = false;
 try { MUTED = sessionStorage.getItem('zhrl_mute') === '1'; } catch (e) {}
@@ -1979,7 +1988,6 @@ const Host = (() => {
     cancelAnimationFrame(timerRaf);
     Bots.stop();
     state.session = null; state.role = null; state.code = '';
-    document.body.classList.remove('demo');
     state.demo = false; state.net = null;
     show('home');
   }
@@ -2644,19 +2652,7 @@ const Player = (() => {
 /* ============================================================
    ABSCHNITT 14: DEMO (lokal, ohne Verbindung)
    ============================================================ */
-function startDemo() {
-  state.demo = true;
-  state.net = createNet('local');
-  document.body.classList.add('demo');
-  state.playlist = defaultPlaylist();
-  Host.paintBuild();
-  show('build');
-  toast('Demo-Modus: Beim Erstellen treten zwölf simulierte Teilnehmende bei.');
-}
-async function demoAfterCreate() {
-  if (!state.demo) return;
-  await Host.startBots(12);
-}
+/* Demo-Modus in v2.0 entfernt. state.demo und das lokale Netz bleiben als interner Testpfad erhalten. */
 
 /* ============================================================
    ABSCHNITT 15: VALIDIERUNG BEIM LADEN
@@ -2712,7 +2708,7 @@ function runValidation() {
     const be = $('boot-error');
     be.textContent = 'Inhaltsprüfung fehlgeschlagen (' + errs.length + ' Punkte, Details in der Konsole). Der Workshop-Teil ist gesperrt.';
     be.classList.remove('hide');
-    ['btn-go-host', 'btn-go-join', 'btn-go-demo'].forEach(id => $(id).disabled = true);
+    ['btn-go-host', 'btn-go-join'].forEach(id => $(id).disabled = true);
     return false;
   }
   console.group('%cZH REDESIGN LAB: Inhaltsprüfung bestanden', 'color:#0E8A5F;font-weight:bold');
@@ -2759,7 +2755,7 @@ function boot() {
   });
   const valid = runValidation();
   if (!FB_CONFIGURED) {
-    console.warn('Firebase ist noch nicht konfiguriert. Erleben und Demo laufen vollständig, der Live-Workshop benötigt die Konfiguration im CONFIG-Block.');
+    console.warn('Firebase ist noch nicht konfiguriert. Der Aufgaben-Check läuft vollständig, der Live-Workshop benötigt die Konfiguration im CONFIG-Block.');
   }
   Erleben.init();
   /* Landing */
@@ -2775,12 +2771,11 @@ function boot() {
     if (!FB_CONFIGURED) { toast('Der Beitritt braucht die Firebase-Konfiguration. Die Demo zeigt den Ablauf ohne Verbindung.', true); return; }
     show('join');
   });
-  $('btn-go-demo').addEventListener('click', startDemo);
   document.querySelectorAll('.js-home').forEach(b => b.addEventListener('click', () => {
-    if (state.role === 'host') { Host.leave(); } else if (state.role === 'player') { Player.leave(); } else { document.body.classList.remove('demo'); state.demo = false; state.net = null; show('home'); }
+    if (state.role === 'host') { Host.leave(); } else if (state.role === 'player') { Player.leave(); } else { state.demo = false; state.net = null; show('home'); }
   }));
   /* Host */
-  $('btn-create').addEventListener('click', async () => { await Host.createSession(); await demoAfterCreate(); });
+  $('btn-create').addEventListener('click', () => Host.createSession());
   $('btn-start').addEventListener('click', Host.startWorkshop);
   document.querySelectorAll('.js-bots').forEach(b => b.addEventListener('click', () => {
     const n = parseInt(b.dataset.n, 10);
@@ -2813,7 +2808,7 @@ function boot() {
   /* Test-Hooks: nur Referenzen, keine Verhaltensaenderung */
   window.__JRL__ = { state, LIB, QUIZ, PULS, CLOUD, KOMP_NAMES, VOTE_NAMES, FIXTURES,
     assess, kennzahl, beitrag, shuffled, findTask, runValidation, createNet,
-    Host, Player, Bots, Erleben, startDemo, show, MOD_META, quizQuestions,
+    Host, Player, Bots, Erleben, show, MOD_META, quizQuestions,
     quizPoints, CD_MS, BOT_LIMIT, SFX, setMuted, logErr, ERRLOG, PHASELOG };
 }
 document.addEventListener('DOMContentLoaded', boot);
